@@ -2,7 +2,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/aranhil/SearchableNavbar)
 ![GitHub](https://img.shields.io/github/license/aranhil/SearchableNavbar)
 
-*Searchable Navbar* is a Visual Studio extension that replaces the standard navigation bar with a searchable navigation bar. It currently only supports C++ and uses [Ctags](https://github.com/universal-ctags/ctags) to generate the function tags.
+*Searchable Navbar* is a Visual Studio extension that replaces the standard navigation bar with a searchable navigation bar. It currently only supports C++ and uses [Universal Ctags](https://github.com/universal-ctags/ctags) to generate the function tags.
 
 ## Setting up in Visual Studio
 ## Installation
@@ -14,10 +14,10 @@
 
 ## Support
 
-If you encounter a bug or want to suggest a feature, please open an issue in the [GitHub repository](https://github.com/aranhil/qgrepGUI/issues).
+If you encounter a bug or want to suggest a feature, please open an issue in the [GitHub repository](https://github.com/aranhil/SearchableNavbar/issues).
 
 ## Acknowledgements
 
 This project has benefited from the use of the following open-source projects:
 
-- [qgrep](https://github.com/zeux/qgrep): This project is licensed under the [MIT License](./LICENSE-qgrep.md).
+- [Universal Ctags]([https://github.com/zeux/qgrep](https://github.com/universal-ctags/ctags)): This project is licensed under the [GPL-2.0 license](./LICENSE-ctags.md).

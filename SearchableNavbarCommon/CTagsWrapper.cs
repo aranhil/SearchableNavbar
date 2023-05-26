@@ -11,7 +11,6 @@ namespace SearchableNavbar
 {
     class CTagsWrapper
     {
-        // Import the necessary Windows API functions
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern IntPtr LoadLibrary(string dllToLoad);
 
@@ -21,7 +20,6 @@ namespace SearchableNavbar
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
 
-        // Define a delegate that matches the prototype of the function you want to call
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr MyFunctionPrototype(int size, IntPtr[] array);
 

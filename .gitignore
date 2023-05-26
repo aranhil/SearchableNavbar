@@ -1,2 +1,6 @@
-FunctionsListing_VS2019\bin
-FunctionsListing_VS2019\obj
+# Binaries
+FunctionsListing_VS2019/bin
+FunctionsListing_VS2019/obj
+
+# Visual Studio
+.vs/

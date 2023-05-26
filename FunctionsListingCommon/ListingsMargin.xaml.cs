@@ -535,6 +535,11 @@ namespace FunctionsListing
             IgnoreNextUnfocus = true;
         }
 
+        private void SearchInput_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            IgnoreNextUnfocus = false;
+        }
+
         private void DockPanel_MouseDown(object sender, MouseButtonEventArgs e)
         {
             FunctionInfo functionInfo = (sender as DockPanel)?.DataContext as FunctionInfo;

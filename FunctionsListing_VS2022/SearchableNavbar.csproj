@@ -100,7 +100,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <VSCTCompile Include="FunctionsListingPackage.vsct">
+    <VSCTCompile Include="SearchableNavbarPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
   </ItemGroup>

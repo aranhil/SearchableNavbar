@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>3cae7f7c-2e8e-48db-a8f3-24574ae79441</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>FunctionsListingCommon</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)ListingsMargin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)ResourceDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)CTagsWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FocusCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FunctionsListingPackage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FunctionsMarginFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ListingsMargin.xaml.cs">
+      <DependentUpon>ListingsMargin.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ResourceDictionary.xaml.cs">
+      <DependentUpon>ResourceDictionary.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)SelectableData.cs" />
+  </ItemGroup>
+</Project>

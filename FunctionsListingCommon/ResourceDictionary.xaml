@@ -1,0 +1,109 @@
+﻿<ResourceDictionary x:Class="FunctionsListing.ResourceDictionary"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+             xmlns:local="clr-namespace:FunctionsListing"
+             mc:Ignorable="d">
+    <Style x:Key="ResultsListBox" TargetType="{x:Type ListBox}">
+        <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:EnvironmentColors.ToolWindowBackgroundBrushKey}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxBorderBrushKey}}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border BorderThickness="{TemplateBinding Border.BorderThickness}" Padding="{TemplateBinding Control.Padding}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
+                        <ScrollViewer Name="SearchScrollbar" Padding="{TemplateBinding Control.Padding}" Focusable="{TemplateBinding Focusable}">
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="Height" Value="20" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                    <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}" />
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                    <Setter Property="Focusable" Value="{Binding Focusable, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" />
+                    <Setter Property="IsTabStop" Value="False" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                <Grid>
+                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Margin="2,0" Padding="5,0" MouseEnter="ListBoxItem_MouseEnter">
+                                        <ContentPresenter Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                    </Border>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsSelected}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemBackgroundHoverBrushKey}}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxBorderHoverBrushKey}}" />
+                        </DataTrigger>
+                        <!--<MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                --><!--<Condition Binding="{Binding IsChecked, ElementName=Expander}" Value="False"/>
+                                <Condition Binding="{Binding IsMouseOver, ElementName=Expander}" Value="True"/>--><!--
+                                <Condition Binding="{Binding Path=IsSelected}" Value="True"/>
+                                <Condition Binding="{Binding IsFocused, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" Value="False"/>
+                                <Condition Binding="{Binding Focusable, RelativeSource={RelativeSource Self}}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="{DynamicResource Result.IsSelected.IsInactive.Background}" />
+                        </MultiDataTrigger>-->
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="SomeTextBoxStyle" TargetType="{x:Type TextBox}">
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxBorderBrushKey}}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxTextInputSelectionBrushKey}}" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxBackgroundBrushKey}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" />
+        <Setter Property="Padding" Value="2" />
+        <Setter Property="Height" Value="24" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="3,2,3,1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBox}">
+                    <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsFocused" Value="true">
+                            <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource Border.IsSelected}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource Border.IsMouseOver}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxBorderHoverBrushKey}}"/>
+            </Trigger>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxBorderFocusedBrushKey}}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

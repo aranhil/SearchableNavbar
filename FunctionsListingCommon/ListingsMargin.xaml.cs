@@ -1,17 +1,24 @@
 ﻿using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio.Imaging;
+using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using static System.Windows.Forms.AxHost;
 
 namespace FunctionsListing
 {
@@ -28,6 +35,20 @@ namespace FunctionsListing
 
         public string FullText { get; set; }
         public string LineNo { get; set; }
+
+        public BitmapSource imageSource;
+        public BitmapSource ImageSource
+        {
+            get
+            {
+                return imageSource;
+            }
+            set
+            {
+                imageSource = value;
+                OnPropertyChanged();
+            }
+        }
     }
     public partial class ListingsMargin : UserControl, IWpfTextViewMargin
     {
@@ -43,14 +64,16 @@ namespace FunctionsListing
 
         List<FunctionInfo> functionLines = new List<FunctionInfo>();
         ObservableCollection<FunctionInfo> filteredFunctionLines = new ObservableCollection<FunctionInfo>();
+        IVsImageService2 ImageService;
 
-        public ListingsMargin(IWpfTextView textView, DTE2 DTE)
+        public ListingsMargin(IWpfTextView textView, DTE2 DTE, IVsImageService2 ImageService)
         {
             InitializeComponent();
 
             this.DTE = DTE;
             this.DocumentElement = textView.VisualElement;
             this.Caret = textView.Caret;
+            this.ImageService = ImageService;
 
             Caret.PositionChanged += Caret_PositionChanged;
             FunctionsListBox.ItemsSource = filteredFunctionLines;
@@ -142,11 +165,17 @@ namespace FunctionsListing
 
                             if(fields.Length >= 4)
                             {
-                                functionLines.Add(new FunctionInfo() 
-                                { 
+                                FunctionInfo newFunctionInfo = new FunctionInfo()
+                                {
                                     FullText = (fields[3].Length > 0 ? fields[3] + "::" : "") + fields[0] + fields[2],
                                     LineNo = fields[1]
-                                });
+                                };
+
+                                System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb(0, 0, 0);
+                                uint backgroundColor = ((uint)color.A << 24) | ((uint)color.R << 16) | ((uint)color.G << 8) | color.B;
+                                GetIcon(KnownMonikers.Method, backgroundColor, newFunctionInfo);
+
+                                functionLines.Add(newFunctionInfo);
                             }
                         }
 
@@ -411,11 +440,20 @@ namespace FunctionsListing
         {
             SearchInput.SelectAll();
             ItemsPopup.IsOpen = true;
+            IgnoreNextUnfocus = false;
         }
 
         private void SearchInput_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            ItemsPopup.IsOpen = false;
+            if(IgnoreNextUnfocus)
+            {
+                SearchInput.Focus();
+                IgnoreNextUnfocus = false;
+            }
+            else
+            {
+                ItemsPopup.IsOpen = false;
+            }
         }
 
         private void GridContainer_PreviewKeyUp(object sender, KeyEventArgs e)
@@ -430,6 +468,12 @@ namespace FunctionsListing
 
         public void FunctionClicked(ListBoxItem listBoxItem)
         {
+        }
+
+        private bool IgnoreNextUnfocus = false;
+        private void UserControl_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            IgnoreNextUnfocus = true;
         }
 
         private void DockPanel_MouseDown(object sender, MouseButtonEventArgs e)
@@ -448,6 +492,47 @@ namespace FunctionsListing
                 SearchInput.Text = "";
                 ItemsPopup.IsOpen = false;
             }
+        }
+
+        private BitmapSource cachedBitmapSource = null;
+
+        public void GetIcon(ImageMoniker imageMoniker, uint background, FunctionInfo functionInfo)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            try
+            {
+                if (cachedBitmapSource != null)
+                {
+                    functionInfo.ImageSource = cachedBitmapSource;
+                }
+                else
+                {
+                    var atts = new ImageAttributes
+                    {
+                        StructSize = Marshal.SizeOf(typeof(ImageAttributes)),
+                        Format = (uint)_UIDataFormat.DF_WPF,
+                        LogicalHeight = 32,
+                        LogicalWidth = 32,
+                        Flags = (uint)_ImageAttributesFlags.IAF_RequiredFlags,
+                        ImageType = (uint)_UIImageType.IT_Bitmap,
+                        Background = background
+                    };
+
+                    unchecked
+                    {
+                        atts.Flags |= (uint)-2147483648;
+                    }
+
+                    var obj = ImageService.GetImage(imageMoniker, atts);
+                    if (obj == null)
+                        return;
+
+                    obj.get_Data(out object data);
+                    functionInfo.ImageSource = (BitmapSource)data;
+                }
+            }
+            catch { }
         }
     }
 }

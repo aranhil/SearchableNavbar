@@ -6,9 +6,12 @@
              xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
              xmlns:local="clr-namespace:FunctionsListing"
              mc:Ignorable="d">
+    <Style x:Key="NonFocusableScrollBar" TargetType="{x:Type ScrollBar}">
+        <Setter Property="Focusable" Value="False"/>
+    </Style>
     <Style x:Key="ResultsListBox" TargetType="{x:Type ListBox}">
         <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
-        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:EnvironmentColors.ToolWindowBackgroundBrushKey}}" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" />
@@ -20,8 +23,14 @@
             <Setter.Value>
                 <ControlTemplate>
                     <Border BorderThickness="{TemplateBinding Border.BorderThickness}" Padding="{TemplateBinding Control.Padding}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
-                        <ScrollViewer Name="SearchScrollbar" Padding="{TemplateBinding Control.Padding}" Focusable="{TemplateBinding Focusable}">
+                        <ScrollViewer Name="SearchScrollbar" Padding="{TemplateBinding Control.Padding}" Focusable="{TemplateBinding Focusable}" FocusVisualStyle="{x:Null}">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                            <ScrollViewer.Resources>
+                                <Style TargetType="{x:Type ScrollBar}">
+                                    <Setter Property="Focusable" Value="False"/>
+                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                </Style>
+                            </ScrollViewer.Resources>
                         </ScrollViewer>
                     </Border>
                 </ControlTemplate>

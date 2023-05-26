@@ -6,6 +6,7 @@ using EnvDTE80;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
@@ -25,7 +26,8 @@ namespace FunctionsListing
 
         public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer)
         {
-            return new ListingsMargin(wpfTextViewHost.TextView, ServiceProvider.GetService(typeof(DTE)) as DTE2);
+            ThreadHelper.ThrowIfNotOnUIThread();
+            return new ListingsMargin(wpfTextViewHost.TextView, ServiceProvider.GetService(typeof(DTE)) as DTE2, ServiceProvider.GetService(typeof(SVsImageService)) as IVsImageService2);
         }
     }
 }

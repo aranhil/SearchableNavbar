@@ -15,7 +15,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Task = System.Threading.Tasks.Task;
 
-namespace FunctionsListing
+namespace SearchableNavbar
 {
     /// <summary>
     /// Command handler
@@ -98,7 +98,7 @@ namespace FunctionsListing
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            FunctionsListingPackage functionsPackage = package as FunctionsListingPackage;
+            SearchableNavbarPackage functionsPackage = package as SearchableNavbarPackage;
             if (functionsPackage.Editor == null || functionsPackage.TextManager == null)
             {
                 return;
@@ -109,7 +109,7 @@ namespace FunctionsListing
 
             if (textviewHost != null)
             {
-                ListingsMargin listingsMargin = textviewHost.GetTextViewMargin(ListingsMargin.MarginName) as ListingsMargin;
+                SearchableNavbarMargin listingsMargin = textviewHost.GetTextViewMargin(SearchableNavbarMargin.MarginName) as SearchableNavbarMargin;
                 if (listingsMargin != null)
                 {
                     listingsMargin.SearchInput.Focus();

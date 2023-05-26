@@ -22,7 +22,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static System.Windows.Forms.AxHost;
 
-namespace FunctionsListing
+namespace SearchableNavbar
 {
     public class FunctionParam
     {
@@ -52,7 +52,7 @@ namespace FunctionsListing
             }
         }
     }
-    public partial class ListingsMargin : UserControl, IWpfTextViewMargin
+    public partial class SearchableNavbarMargin : UserControl, IWpfTextViewMargin
     {
         public const string MarginName = "FunctionListingsMargin";
 
@@ -69,7 +69,7 @@ namespace FunctionsListing
         ObservableCollection<FunctionInfo> filteredFunctionLines = new ObservableCollection<FunctionInfo>();
         IVsImageService2 ImageService;
 
-        public ListingsMargin(IWpfTextView textView, DTE2 DTE, IVsImageService2 ImageService)
+        public SearchableNavbarMargin(IWpfTextView textView, DTE2 DTE, IVsImageService2 ImageService)
         {
             InitializeComponent();
 
@@ -119,7 +119,7 @@ namespace FunctionsListing
 
         public ITextViewMargin GetTextViewMargin(string marginName)
         {
-            return string.Equals(marginName, ListingsMargin.MarginName, StringComparison.OrdinalIgnoreCase) ? this : null;
+            return string.Equals(marginName, SearchableNavbarMargin.MarginName, StringComparison.OrdinalIgnoreCase) ? this : null;
         }
 
         public void Dispose()

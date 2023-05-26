@@ -9,12 +9,12 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Task = System.Threading.Tasks.Task;
 
-namespace FunctionsListing
+namespace SearchableNavbar
 {
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-    [Guid(FunctionsListingPackage.PackageGuidString)]
+    [Guid(SearchableNavbarPackage.PackageGuidString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    public sealed class FunctionsListingPackage : AsyncPackage
+    public sealed class SearchableNavbarPackage : AsyncPackage
     {
         public const string PackageGuidString = "5ff8b546-f79f-471f-805a-c89eabc400b2";
 

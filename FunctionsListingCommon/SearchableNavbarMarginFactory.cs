@@ -10,16 +10,16 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
-namespace FunctionsListing
+namespace SearchableNavbar
 {
     [Export(typeof(IWpfTextViewMarginProvider))]
-    [Name(ListingsMargin.MarginName)]
+    [Name(SearchableNavbarMargin.MarginName)]
     [Order(After = PredefinedMarginNames.HorizontalScrollBar)]  // Ensure that the margin occurs below the horizontal scrollbar
     [MarginContainer(PredefinedMarginNames.Top)]             // Set the container to the bottom of the editor window
     [ContentType("C/C++")]
-    [ContentType("CSharp")]
+    //[ContentType("CSharp")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
-    internal sealed class FunctionsMarginFactory : IWpfTextViewMarginProvider
+    internal sealed class SearchableNavbarMarginFactory : IWpfTextViewMarginProvider
     {
         [Import(typeof(SVsServiceProvider))]
         private IServiceProvider ServiceProvider;
@@ -27,7 +27,7 @@ namespace FunctionsListing
         public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            return new ListingsMargin(wpfTextViewHost.TextView, ServiceProvider.GetService(typeof(DTE)) as DTE2, ServiceProvider.GetService(typeof(SVsImageService)) as IVsImageService2);
+            return new SearchableNavbarMargin(wpfTextViewHost.TextView, ServiceProvider.GetService(typeof(DTE)) as DTE2, ServiceProvider.GetService(typeof(SVsImageService)) as IVsImageService2);
         }
     }
 }

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.33529.622
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FunctionsListingCommon", "FunctionsListingCommon\FunctionsListingCommon.shproj", "{3CAE7F7C-2E8E-48DB-A8F3-24574AE79441}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SearchableNavbarCommon", "FunctionsListingCommon\SearchableNavbarCommon.shproj", "{3CAE7F7C-2E8E-48DB-A8F3-24574AE79441}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsListing", "FunctionsListing_VS2019\FunctionsListing.csproj", "{F967341D-3F76-459B-AEC4-3C5B3789374D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchableNavbar", "FunctionsListing_VS2019\SearchableNavbar.csproj", "{F967341D-3F76-459B-AEC4-3C5B3789374D}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

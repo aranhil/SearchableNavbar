@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FunctionsListing
+namespace SearchableNavbar
 {
     /// <summary>
     /// Interaction logic for ResourceDictionary.xaml

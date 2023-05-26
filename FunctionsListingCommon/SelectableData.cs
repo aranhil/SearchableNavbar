@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace FunctionsListing
+namespace SearchableNavbar
 {
     public class SelectableData : INotifyPropertyChanged
     {

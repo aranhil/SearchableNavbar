@@ -38,9 +38,6 @@ namespace FunctionsListing
         CodeModelEvents CodeModelEvents;
         public FrameworkElement DocumentElement = null;
 
-        private bool IgnoreNextMouseOver = false;
-        private bool IgnoreTextChange = false;
-
         private bool isDisposed;
         private IWpfTextView textView;
 
@@ -360,8 +357,6 @@ namespace FunctionsListing
             {
                 if(oldSelectedSearchResult != null)
                 {
-                    ItemsPopup.IsOpen = false;
-
                     try
                     {
                         ThreadHelper.ThrowIfNotOnUIThread();
@@ -373,6 +368,7 @@ namespace FunctionsListing
                     catch { }
 
                     SearchInput.Text = "";
+                    ItemsPopup.IsOpen = false;
                 }
             }
         }
@@ -436,8 +432,6 @@ namespace FunctionsListing
             FunctionInfo functionInfo = (sender as DockPanel)?.DataContext as FunctionInfo;
             if (functionInfo != null)
             {
-                ItemsPopup.IsOpen = false;
-
                 try
                 {
                     ThreadHelper.ThrowIfNotOnUIThread();
@@ -447,6 +441,7 @@ namespace FunctionsListing
                 catch { }
 
                 SearchInput.Text = "";
+                ItemsPopup.IsOpen = false;
             }
         }
     }

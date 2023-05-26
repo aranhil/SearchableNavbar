@@ -9,6 +9,15 @@
     <Import_RootNamespace>FunctionsListingCommon</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)CTagsWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FocusCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FunctionsListingPackage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FunctionsMarginFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ListingsMargin.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ResourceDictionary.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SelectableData.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)ListingsMargin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -17,18 +26,5 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)CTagsWrapper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FocusCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FunctionsListingPackage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FunctionsMarginFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ListingsMargin.xaml.cs">
-      <DependentUpon>ListingsMargin.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)ResourceDictionary.xaml.cs">
-      <DependentUpon>ResourceDictionary.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)SelectableData.cs" />
   </ItemGroup>
 </Project>

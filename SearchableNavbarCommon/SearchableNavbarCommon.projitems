@@ -6,7 +6,7 @@
     <SharedGUID>3cae7f7c-2e8e-48db-a8f3-24574ae79441</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>FunctionsListingCommon</Import_RootNamespace>
+    <Import_RootNamespace>SearchableNavbarCommon</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CTagsWrapper.cs" />

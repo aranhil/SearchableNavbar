@@ -1,8 +1,8 @@
 # Binaries
-FunctionsListing_VS2019/bin
-FunctionsListing_VS2019/obj
-FunctionsListing_VS2022/bin
-FunctionsListing_VS2022/obj
+SearchableNavbar_VS2019/bin
+SearchableNavbar_VS2019/obj
+SearchableNavbar_VS2022/bin
+SearchableNavbar_VS2022/obj
 
 # Visual Studio
 .vs/

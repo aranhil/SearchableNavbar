@@ -2,8 +2,10 @@
 using EnvDTE80;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Imaging.Interop;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.VCProjectEngine;
 using System;
@@ -62,6 +64,7 @@ namespace FunctionsListing
         private bool isDisposed;
         private IWpfTextView textView;
 
+        FunctionInfo currentInfo = null;
         List<FunctionInfo> functionLines = new List<FunctionInfo>();
         ObservableCollection<FunctionInfo> filteredFunctionLines = new ObservableCollection<FunctionInfo>();
         IVsImageService2 ImageService;
@@ -144,9 +147,10 @@ namespace FunctionsListing
 
         private void UpdateFunctions()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             try
             {
-                ThreadHelper.ThrowIfNotOnUIThread();
 
                 EnvDTE.Document doc = DTE.ActiveDocument;
                 string path = doc?.FullName ?? "";
@@ -157,6 +161,8 @@ namespace FunctionsListing
 
                     Dispatcher.Invoke(() =>
                     {
+                        functionLines.Clear();
+
                         string[] lines = tags.Split('\n');
                         foreach (string line in lines)
                         {
@@ -170,10 +176,6 @@ namespace FunctionsListing
                                     FullText = (fields[3].Length > 0 ? fields[3] + "::" : "") + fields[0] + fields[2],
                                     LineNo = fields[1]
                                 };
-
-                                System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb(0, 0, 0);
-                                uint backgroundColor = ((uint)color.A << 24) | ((uint)color.R << 16) | ((uint)color.G << 8) | color.B;
-                                GetIcon(KnownMonikers.Method, backgroundColor, newFunctionInfo);
 
                                 functionLines.Add(newFunctionInfo);
                             }
@@ -281,6 +283,50 @@ namespace FunctionsListing
         private void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+
+            try
+            {
+                SnapshotPoint? point = e.NewPosition.Point.GetPoint(textView.TextBuffer, e.NewPosition.Affinity);
+
+                if (point.HasValue)
+                {
+                    ITextSnapshotLine line = point.Value.GetContainingLine();
+
+                    int lineNumber = line.LineNumber + 1;
+                    currentInfo = null;
+
+                    List<FunctionInfo> orderedFunctions = functionLines.OrderBy(x => int.Parse(x.LineNo)).ToList();
+                    if(orderedFunctions.Count == 1)
+                    {
+                        currentInfo = orderedFunctions[0];
+                    }
+                    else
+                    {
+                        for (int i = 1; i < orderedFunctions.Count; i++)
+                        {
+                            if (lineNumber < int.Parse(orderedFunctions[i].LineNo))
+                            {
+                                if (i > 0)
+                                {
+                                    currentInfo = orderedFunctions[i - 1];
+                                }
+                                break;
+                            }
+
+                            if(i == orderedFunctions.Count - 1)
+                            {
+                                currentInfo = orderedFunctions[i];
+                            }
+                        }
+                    }
+
+                    if(currentInfo != null)
+                    {
+                        Overlay.DataContext = currentInfo;
+                    }
+                }
+            }
+            catch { }
         }
 
 
@@ -294,6 +340,8 @@ namespace FunctionsListing
 
         private void GridContainer_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             FunctionInfo newSelectedSearchResult = null;
             FunctionInfo oldSelectedSearchResult = selectedSearchResult >= 0 && selectedSearchResult < filteredFunctionLines.Count ? filteredFunctionLines[selectedSearchResult] : null;
 
@@ -388,7 +436,6 @@ namespace FunctionsListing
                 {
                     try
                     {
-                        ThreadHelper.ThrowIfNotOnUIThread();
                         textView.VisualElement.Focus();
                         (DTE?.ActiveDocument?.Selection as TextSelection)?.MoveToLineAndOffset(int.Parse(oldSelectedSearchResult.LineNo), 1);
 
@@ -397,13 +444,17 @@ namespace FunctionsListing
                     catch { }
 
                     SearchInput.Text = "";
+                    Overlay.Visibility = Visibility.Visible;
                     ItemsPopup.IsOpen = false;
                 }
             }
             else if(e.Key == Key.Escape)
             {
                 SearchInput.Text = "";
+                Overlay.Visibility = Visibility.Visible;
                 ItemsPopup.IsOpen = false;
+
+                textView.VisualElement.Focus();
             }
         }
 
@@ -411,6 +462,7 @@ namespace FunctionsListing
         {
             newSelectedSearchResult.IsSelected = true;
             selectedSearchResult = filteredFunctionLines.IndexOf(newSelectedSearchResult);
+            Overlay.DataContext = newSelectedSearchResult;
 
             VirtualizingStackPanel virtualizingStackPanel = GetChildOfType<VirtualizingStackPanel>(FunctionsListBox);
             if(virtualizingStackPanel != null)
@@ -439,8 +491,14 @@ namespace FunctionsListing
         private void SearchInput_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             SearchInput.SelectAll();
+            Overlay.Visibility = Visibility.Collapsed;
             ItemsPopup.IsOpen = true;
             IgnoreNextUnfocus = false;
+
+            if (currentInfo != null)
+            {
+                SelectSearchResult(currentInfo);
+            }
         }
 
         private void SearchInput_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -452,6 +510,7 @@ namespace FunctionsListing
             }
             else
             {
+                Overlay.Visibility = Visibility.Visible;
                 ItemsPopup.IsOpen = false;
             }
         }
@@ -490,49 +549,9 @@ namespace FunctionsListing
                 catch { }
 
                 SearchInput.Text = "";
+                Overlay.Visibility = Visibility.Visible;
                 ItemsPopup.IsOpen = false;
             }
-        }
-
-        private BitmapSource cachedBitmapSource = null;
-
-        public void GetIcon(ImageMoniker imageMoniker, uint background, FunctionInfo functionInfo)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            try
-            {
-                if (cachedBitmapSource != null)
-                {
-                    functionInfo.ImageSource = cachedBitmapSource;
-                }
-                else
-                {
-                    var atts = new ImageAttributes
-                    {
-                        StructSize = Marshal.SizeOf(typeof(ImageAttributes)),
-                        Format = (uint)_UIDataFormat.DF_WPF,
-                        LogicalHeight = 32,
-                        LogicalWidth = 32,
-                        Flags = (uint)_ImageAttributesFlags.IAF_RequiredFlags,
-                        ImageType = (uint)_UIImageType.IT_Bitmap,
-                        Background = background
-                    };
-
-                    unchecked
-                    {
-                        atts.Flags |= (uint)-2147483648;
-                    }
-
-                    var obj = ImageService.GetImage(imageMoniker, atts);
-                    if (obj == null)
-                        return;
-
-                    obj.get_Data(out object data);
-                    functionInfo.ImageSource = (BitmapSource)data;
-                }
-            }
-            catch { }
         }
     }
 }

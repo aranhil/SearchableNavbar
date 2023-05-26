@@ -4,6 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FunctionsListing"
+             xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+             xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+             xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
              mc:Ignorable="d" Height="24" Loaded="UserControl_Loaded"
              d:DesignHeight="450" d:DesignWidth="800" Visibility="Visible" GotFocus="UserControl_GotFocus" PreviewMouseDown="UserControl_PreviewMouseDown">
     <UserControl.Resources>
@@ -11,16 +14,19 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid x:Name="GridContainer" PreviewKeyDown="GridContainer_PreviewKeyDown">
-        <Border BorderBrush="#FF444444" BorderThickness="1" Background="{DynamicResource VsBrush.EnvironmentBackgroundGradient}"></Border>
+        <Border BorderBrush="#FF444444" BorderThickness="1"></Border>
         <TextBox x:Name="SearchInput" Style="{DynamicResource SomeTextBoxStyle}" TextChanged="FunctionsList_TextChanged" LostKeyboardFocus="SearchInput_LostKeyboardFocus" GotKeyboardFocus="SearchInput_GotKeyboardFocus">
         </TextBox>
-        <!--<local:FunctionLine x:Name="OverlayLine" IsHitTestVisible="False" />-->
+        <DockPanel x:Name="Overlay" IsHitTestVisible="False" Margin="5,0">
+            <imaging:CrispImage Width="16" Height="16" Moniker="{x:Static catalog:KnownMonikers.MethodPublic}" />
+            <TextBlock Text="{Binding Path=FullText}" Foreground="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" VerticalAlignment="Center"/>
+        </DockPanel>
         <Popup x:Name="ItemsPopup" Placement="Relative" VerticalOffset="24">
             <ListBox x:Name="FunctionsListBox" ItemsSource="{Binding}" Style="{DynamicResource ResultsListBox}" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="500" Focusable="False" SelectionChanged="FunctionsListBox_SelectionChanged" MinWidth="{Binding ActualWidth, ElementName=SearchInput}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <DockPanel MouseDown="DockPanel_MouseDown">
-                            <Image Margin="-4,0,2,0" Width="16" Height="16" Source="{Binding ImageSource}" Style="{x:Null}" />
+                            <imaging:CrispImage Width="16" Height="16" Moniker="{x:Static catalog:KnownMonikers.MethodPublic}" />
                             <TextBlock Text="{Binding Path=FullText}"/>
                         </DockPanel>
                     </DataTemplate>

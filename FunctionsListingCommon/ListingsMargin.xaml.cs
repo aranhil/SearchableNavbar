@@ -371,6 +371,11 @@ namespace FunctionsListing
                     ItemsPopup.IsOpen = false;
                 }
             }
+            else if(e.Key == Key.Escape)
+            {
+                SearchInput.Text = "";
+                ItemsPopup.IsOpen = false;
+            }
         }
 
         private void SelectSearchResult(FunctionInfo newSelectedSearchResult)

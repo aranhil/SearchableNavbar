@@ -157,7 +157,7 @@ namespace SearchableNavbar
 
                 System.Threading.Tasks.Task.Run(() =>
                 {
-                    string tags = CTagsWrapper.Test(path);
+                    string tags = CTagsWrapper.Parse(path);
 
                     Dispatcher.Invoke(() =>
                     {

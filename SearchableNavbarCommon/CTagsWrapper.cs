@@ -25,9 +25,8 @@ namespace SearchableNavbar
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr MyFunctionPrototype(int size, IntPtr[] array);
 
-        public static string Test(string path)
+        public static string Parse(string path)
         {
-            // Load the DLL
             string assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string dllPath = Path.Combine(assemblyDirectory, "ctags.dll");
 
@@ -38,7 +37,6 @@ namespace SearchableNavbar
                 return "";
             }
 
-            // Get a pointer to the function
             IntPtr pAddressOfFunctionToCall = GetProcAddress(pDll, "ctags_cli_lib");
             if (pAddressOfFunctionToCall == IntPtr.Zero)
             {
@@ -46,30 +44,24 @@ namespace SearchableNavbar
                 return "";
             }
 
-            // Cast the function pointer to the delegate type
             MyFunctionPrototype myFunction = (MyFunctionPrototype)Marshal.GetDelegateForFunctionPointer(pAddressOfFunctionToCall, typeof(MyFunctionPrototype));
 
-            // Create an array of command-line arguments
             string[] args = new string[] { "ctags", "-x", "--fields=S", "--language-force=c++", "--c++-kinds=fp", "--_xformat=%N\t%n\t%S\t%Z", path };
-
             string output = "";
 
             try
             {
-                // Marshal the string arguments
                 IntPtr[] argvPointers = new IntPtr[args.Length];
                 for (int i = 0; i < args.Length; i++)
                 {
                     argvPointers[i] = Marshal.StringToHGlobalAnsi(args[i]);
                 }
 
-                // Now you can call the function
                 IntPtr outputPtr = myFunction(argvPointers.Length, argvPointers);
                 output = Marshal.PtrToStringAnsi(outputPtr);
             }
             catch { }
 
-            // Unload the DLL
             bool resultFree = FreeLibrary(pDll);
             if (!resultFree)
             {
@@ -78,47 +70,5 @@ namespace SearchableNavbar
 
             return output;
         }
-
-        //[DllImport("ctags-x86.dll", CallingConvention = CallingConvention.Cdecl)]
-        //private static extern void ctags_cli_lib_free(IntPtr str);
-
-        //[DllImport("ctags-x86.dll", CallingConvention = CallingConvention.Cdecl)]
-        //private static extern IntPtr ctags_cli_lib(int size, IntPtr[] array);
-
-        //public static string ParseFile(string path)
-        //{
-        //    // Create an array of command-line arguments
-        //    string[] args = new string[] { "ctags", "-x", "--fields=S", "--language-force=c++", "--c++-kinds=fp", "--_xformat=%N\t%n\t%S\t%Z", path };
-
-        //    string output = "";
-
-        //    // Marshal the string arguments
-        //    IntPtr[] argvPointers = new IntPtr[args.Length];
-        //    try
-        //    {
-        //        for (int i = 0; i < args.Length; i++)
-        //        {
-        //            argvPointers[i] = Marshal.StringToHGlobalAnsi(args[i]);
-        //        }
-
-        //        IntPtr outputPtr = ctags_cli_lib(argvPointers.Length, argvPointers);
-        //        output = Marshal.PtrToStringAnsi(outputPtr);
-        //        ctags_cli_lib_free(outputPtr);
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-        //    finally
-        //    {
-        //        // Release the allocated memory
-        //        for (int i = 0; i < args.Length; i++)
-        //        {
-        //            Marshal.FreeHGlobal(argvPointers[i]);
-        //        }
-        //    }
-
-        //    return output;
-        //}
     }
 }

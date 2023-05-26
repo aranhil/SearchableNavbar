@@ -18,7 +18,7 @@
         <TextBox x:Name="SearchInput" Style="{DynamicResource SomeTextBoxStyle}" TextChanged="FunctionsList_TextChanged" LostKeyboardFocus="SearchInput_LostKeyboardFocus" GotKeyboardFocus="SearchInput_GotKeyboardFocus" PreviewMouseDown="SearchInput_PreviewMouseDown">
         </TextBox>
         <DockPanel x:Name="Overlay" IsHitTestVisible="False" Margin="5,0">
-            <imaging:CrispImage Width="16" Height="16" Moniker="{x:Static catalog:KnownMonikers.MethodPublic}" />
+            <imaging:CrispImage Width="16" Height="16" Margin="0,0,2,0" Moniker="{x:Static catalog:KnownMonikers.MethodPublic}" />
             <TextBlock Text="{Binding Path=FullText}" Foreground="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" VerticalAlignment="Center"/>
         </DockPanel>
         <Popup x:Name="ItemsPopup" Placement="Relative" VerticalOffset="24">

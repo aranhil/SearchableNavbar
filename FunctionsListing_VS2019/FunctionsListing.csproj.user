@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectView>ProjectFiles</ProjectView>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <StartProgram>C:\Program Files %28x86%29\Microsoft Visual Studio\2019\Community\Common7\IDE\devenv.exe</StartProgram>
+    <StartArguments>/rootsuffix Exp</StartArguments>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <StartAction>Program</StartAction>
+    <DeployTargetInstanceId />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <StartProgram>C:\Program Files %28x86%29\Microsoft Visual Studio\2019\Community\Common7\IDE\devenv.exe</StartProgram>
+    <StartArguments>/rootsuffix Exp</StartArguments>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <StartAction>Program</StartAction>
+    <DeployTargetInstanceId />
+  </PropertyGroup>
+</Project>

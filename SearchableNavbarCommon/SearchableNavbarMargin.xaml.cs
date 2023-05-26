@@ -462,15 +462,19 @@ namespace SearchableNavbar
         {
             newSelectedSearchResult.IsSelected = true;
             selectedSearchResult = filteredFunctionLines.IndexOf(newSelectedSearchResult);
-            Overlay.DataContext = newSelectedSearchResult;
 
-            VirtualizingStackPanel virtualizingStackPanel = GetChildOfType<VirtualizingStackPanel>(FunctionsListBox);
-            if(virtualizingStackPanel != null)
+            if(selectedSearchResult >= 0)
             {
-                virtualizingStackPanel.BringIndexIntoViewPublic(selectedSearchResult);
-                ListBoxItem listBoxItem = FunctionsListBox.ItemContainerGenerator.ContainerFromItem(newSelectedSearchResult) as ListBoxItem;
+                Overlay.DataContext = newSelectedSearchResult;
 
-                listBoxItem?.BringIntoView();
+                VirtualizingStackPanel virtualizingStackPanel = GetChildOfType<VirtualizingStackPanel>(FunctionsListBox);
+                if (virtualizingStackPanel != null)
+                {
+                    virtualizingStackPanel.BringIndexIntoViewPublic(selectedSearchResult);
+                    ListBoxItem listBoxItem = FunctionsListBox.ItemContainerGenerator.ContainerFromItem(newSelectedSearchResult) as ListBoxItem;
+
+                    listBoxItem?.BringIntoView();
+                }
             }
         }
 

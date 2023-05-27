@@ -28,14 +28,13 @@ namespace SearchableNavbar
                 "--kinds-PHP=f",
                 "--kinds-Python=f",
                 "--kinds-Ruby=f",
-                "--kinds-Rust=fp",
+                "--kinds-Rust=fP",
                 "--kinds-TypeScript=fm",
                 "--extras=+q",
                 "--_xformat=\"%N\t%n\"",
-                path
+                "\"" + path + "\""
             };
 
-            // Convert args array to string with space separator
             string arguments = string.Join(" ", args);
 
             ProcessStartInfo startInfo = new ProcessStartInfo();

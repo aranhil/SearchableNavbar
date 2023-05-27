@@ -74,10 +74,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="16.10.31321.278" ExcludeAssets="runtime">
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="16.9.31025.194" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.11.69">
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.9.2028">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -88,9 +88,9 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ctags.dll">
-      <IncludeInVSIX>true</IncludeInVSIX>
+    <Content Include="ctags.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\search-engine-128px.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,43 +12,14 @@ namespace SearchableNavbar
 {
     class CTagsWrapper
     {
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern IntPtr LoadLibrary(string dllToLoad);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool FreeLibrary(IntPtr hModule);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate IntPtr MyFunctionPrototype(int size, IntPtr[] array);
-
         public static string Parse(string path)
         {
             string assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string dllPath = Path.Combine(assemblyDirectory, "ctags.dll");
+            string exePath = Path.Combine(assemblyDirectory, "ctags.exe");
 
-            IntPtr pDll = LoadLibrary(dllPath);
-            if (pDll == IntPtr.Zero)
-            {
-                Console.WriteLine("Failed to load DLL");
-                return "";
-            }
-
-            IntPtr pAddressOfFunctionToCall = GetProcAddress(pDll, "ctags_cli_lib");
-            if (pAddressOfFunctionToCall == IntPtr.Zero)
-            {
-                Console.WriteLine("Failed to find function");
-                return "";
-            }
-
-            MyFunctionPrototype myFunction = (MyFunctionPrototype)Marshal.GetDelegateForFunctionPointer(pAddressOfFunctionToCall, typeof(MyFunctionPrototype));
-
-            string[] args = new string[] { 
-                "ctags", 
-                "-x", 
-                "--fields=S", 
+            string[] args = new string[] {
+                "-x",
+                "--fields=S",
                 "--kinds-C++=fp",
                 "--kinds-C#=m",
                 "--kinds-Java=m",
@@ -59,29 +31,36 @@ namespace SearchableNavbar
                 "--kinds-Rust=fp",
                 "--kinds-TypeScript=fm",
                 "--extras=+q",
-                "--_xformat=%N\t%n", 
-                path 
+                "--_xformat=\"%N\t%n\"",
+                path
             };
+
+            // Convert args array to string with space separator
+            string arguments = string.Join(" ", args);
+
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;  // Redirect the output to retrieve it
+            startInfo.FileName = exePath;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            startInfo.Arguments = arguments;
 
             string output = "";
 
             try
             {
-                IntPtr[] argvPointers = new IntPtr[args.Length];
-                for (int i = 0; i < args.Length; i++)
+                // Start the process with the info we specified.
+                using (Process exeProcess = Process.Start(startInfo))
                 {
-                    argvPointers[i] = Marshal.StringToHGlobalAnsi(args[i]);
+                    output = exeProcess.StandardOutput.ReadToEnd();  // Read the output from the process
+                    exeProcess.WaitForExit();
                 }
-
-                IntPtr outputPtr = myFunction(argvPointers.Length, argvPointers);
-                output = Marshal.PtrToStringAnsi(outputPtr);
             }
-            catch { }
-
-            bool resultFree = FreeLibrary(pDll);
-            if (!resultFree)
+            catch
             {
-                Console.WriteLine("Failed to free DLL");
+                // Handle any exceptions that occur when starting the process.
+                Console.WriteLine("Failed to start process");
             }
 
             return output;

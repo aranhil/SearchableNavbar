@@ -19,7 +19,8 @@
         </TextBox>
         <DockPanel x:Name="Overlay" IsHitTestVisible="False" Margin="5,0">
             <imaging:CrispImage Width="16" Height="16" Margin="0,0,2,0" Moniker="{x:Static catalog:KnownMonikers.MethodPublic}" />
-            <TextBlock Text="{Binding Path=FullText}" Foreground="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding Path=Scope}" Foreground="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" Opacity="0.5" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding Path=Tag}" Foreground="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" VerticalAlignment="Center"/>
         </DockPanel>
         <Popup x:Name="ItemsPopup" Placement="Relative" VerticalOffset="24">
             <ListBox x:Name="FunctionsListBox" ItemsSource="{Binding}" Style="{DynamicResource ResultsListBox}" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="500" Focusable="False" SelectionChanged="FunctionsListBox_SelectionChanged" MinWidth="{Binding ActualWidth, ElementName=SearchInput}">
@@ -27,7 +28,8 @@
                     <DataTemplate>
                         <DockPanel MouseDown="DockPanel_MouseDown">
                             <imaging:CrispImage Width="16" Height="16" Margin="-4,0,2,0" Moniker="{x:Static catalog:KnownMonikers.MethodPublic}" />
-                            <TextBlock Text="{Binding Path=FullText}"/>
+                            <TextBlock Text="{Binding Path=Scope}" Opacity="0.6"/>
+                            <TextBlock Text="{Binding Path=Tag}"/>
                         </DockPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

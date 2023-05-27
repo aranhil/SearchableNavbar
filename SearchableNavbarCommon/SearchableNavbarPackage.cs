@@ -27,9 +27,9 @@ namespace SearchableNavbar
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-            TextManager = (IVsTextManager)GetService(typeof(SVsTextManager));
+            TextManager = (IVsTextManager)await GetServiceAsync(typeof(SVsTextManager));
 
-            IComponentModel componentModel = (IComponentModel)GetService(typeof(SComponentModel));
+            IComponentModel componentModel = (IComponentModel)await GetServiceAsync(typeof(SComponentModel));
             if(componentModel != null)
             Editor = componentModel.GetService<IVsEditorAdaptersFactoryService>();
 

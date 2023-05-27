@@ -16,13 +16,14 @@ namespace SearchableNavbar
     [Name(SearchableNavbarMargin.MarginName)]
     [Order(After = PredefinedMarginNames.HorizontalScrollBar)]  // Ensure that the margin occurs below the horizontal scrollbar
     [MarginContainer(PredefinedMarginNames.Top)]             // Set the container to the bottom of the editor window
-    [ContentType("C/C++")]
-    //[ContentType("CSharp")]
+    [ContentType("text")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     internal sealed class SearchableNavbarMarginFactory : IWpfTextViewMarginProvider
     {
+#pragma warning disable CS0649
         [Import(typeof(SVsServiceProvider))]
         private IServiceProvider ServiceProvider;
+#pragma warning restore CS0649
 
         public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer)
         {

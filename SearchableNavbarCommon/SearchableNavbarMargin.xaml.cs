@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static Microsoft.VisualStudio.Threading.AsyncReaderWriterLock;
 using static System.Windows.Forms.AxHost;
 
 namespace SearchableNavbar
@@ -35,7 +37,8 @@ namespace SearchableNavbar
         {
         }
 
-        public string FullText { get; set; }
+        public string Tag { get; set; }
+        public string Scope { get; set; }
         public string LineNo { get; set; }
 
         public BitmapSource imageSource;
@@ -155,34 +158,58 @@ namespace SearchableNavbar
                 EnvDTE.Document doc = DTE.ActiveDocument;
                 string path = doc?.FullName ?? "";
 
-                System.Threading.Tasks.Task.Run(() =>
+                _ = System.Threading.Tasks.Task.Run(async () =>
                 {
                     string tags = CTagsWrapper.Parse(path);
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-                    Dispatcher.Invoke(() =>
+                    try
                     {
                         functionLines.Clear();
 
-                        string[] lines = tags.Split('\n');
-                        foreach (string line in lines)
+                        if (tags != null)
                         {
-                            // Split each line into fields
-                            string[] fields = line.Split('\t');
-
-                            if(fields.Length >= 4)
+                            string[] lines = tags.Split('\n');
+                            foreach (string line in lines)
                             {
-                                FunctionInfo newFunctionInfo = new FunctionInfo()
-                                {
-                                    FullText = (fields[3].Length > 0 ? fields[3] + "::" : "") + fields[0] + fields[2],
-                                    LineNo = fields[1]
-                                };
+                                // Split each line into fields
+                                string[] fields = line.Split('\t');
 
-                                functionLines.Add(newFunctionInfo);
+                                if (fields.Length == 2)
+                                {
+                                    FunctionInfo newFunctionInfo = new FunctionInfo()
+                                    {
+                                        Tag = fields[0],
+                                        LineNo = fields[1],
+                                        Scope = ""
+                                    };
+
+                                    int index = functionLines.FindIndex(x => x.LineNo == newFunctionInfo.LineNo);
+                                    if (index >= 0)
+                                    {
+                                        if (newFunctionInfo.Tag.Length > functionLines[index].Tag.Length)
+                                        {
+                                            newFunctionInfo.Scope = newFunctionInfo.Tag.Substring(0, newFunctionInfo.Tag.Length - functionLines[index].Tag.Length);
+                                            newFunctionInfo.Tag = functionLines[index].Tag;
+                                            functionLines[index] = newFunctionInfo;
+                                        }
+                                        else
+                                        {
+                                            functionLines[index].Scope = functionLines[index].Tag.Substring(0, functionLines[index].Tag.Length - newFunctionInfo.Tag.Length);
+                                            functionLines[index].Tag = newFunctionInfo.Tag;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        functionLines.Add(newFunctionInfo);
+                                    }
+                                }
                             }
                         }
+                    }
+                    catch { }
 
-                        FilterFunctions();
-                    });
+                    FilterFunctions();
                 });
             }
             catch(Exception)
@@ -212,7 +239,7 @@ namespace SearchableNavbar
             foreach (FunctionInfo functionInfo in functionLines)
             {
                 bool allWordsMatch = true;
-                string fullTextLower = functionInfo.FullText.ToLowerInvariant();
+                string fullTextLower = (functionInfo.Scope + functionInfo.Tag).ToLowerInvariant();
 
                 foreach (string word in words)
                 {
@@ -253,31 +280,28 @@ namespace SearchableNavbar
             FilterFunctions();
         }
 
-        private void CodeModelElementDeleted(object Parent, CodeElement Element)
+        public void CodeModelElementDeleted(object Parent, CodeElement Element)
         {
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.JoinableTaskFactory.Run(async delegate {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                 UpdateFunctions();
-            }));
+            });
         }
 
-        private void CodeModelElementAdded(CodeElement Element)
+        public void CodeModelElementAdded(CodeElement Element)
         {
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.JoinableTaskFactory.Run(async delegate {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                 UpdateFunctions();
-            }));
+            });
         }
 
-        private void CodeModelElementChanged(CodeElement Element, vsCMChangeKind Change)
+        public void CodeModelElementChanged(CodeElement Element, vsCMChangeKind Change)
         {
-            Dispatcher.BeginInvoke(new Action(() => 
-            {
-                ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.JoinableTaskFactory.Run(async delegate {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                 UpdateFunctions();
-            }));
+            });
         }
 
         private void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e)
@@ -546,12 +570,13 @@ namespace SearchableNavbar
 
         private void DockPanel_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             FunctionInfo functionInfo = (sender as DockPanel)?.DataContext as FunctionInfo;
             if (functionInfo != null)
             {
                 try
                 {
-                    ThreadHelper.ThrowIfNotOnUIThread();
                     textView.VisualElement.Focus();
                     (DTE?.ActiveDocument?.Selection as TextSelection)?.MoveToLineAndOffset(int.Parse(functionInfo.LineNo), 1);
                 }

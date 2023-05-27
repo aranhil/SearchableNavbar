@@ -44,7 +44,25 @@ namespace SearchableNavbar
 
             MyFunctionPrototype myFunction = (MyFunctionPrototype)Marshal.GetDelegateForFunctionPointer(pAddressOfFunctionToCall, typeof(MyFunctionPrototype));
 
-            string[] args = new string[] { "ctags", "-x", "--fields=S", "--language-force=c++", "--c++-kinds=fp", "--_xformat=%N\t%n\t%S\t%Z", path };
+            string[] args = new string[] { 
+                "ctags", 
+                "-x", 
+                "--fields=S", 
+                "--kinds-C++=fp",
+                "--kinds-C#=m",
+                "--kinds-Java=m",
+                "--kinds-JavaScript=mf",
+                "--kinds-Pascal=fp",
+                "--kinds-PHP=f",
+                "--kinds-Python=f",
+                "--kinds-Ruby=f",
+                "--kinds-Rust=fp",
+                "--kinds-TypeScript=fm",
+                "--extras=+q",
+                "--_xformat=%N\t%n", 
+                path 
+            };
+
             string output = "";
 
             try

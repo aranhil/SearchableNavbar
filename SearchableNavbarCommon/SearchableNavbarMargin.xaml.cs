@@ -539,8 +539,8 @@ namespace SearchableNavbar
             else
             {
                 Overlay.Visibility = Visibility.Visible;
-                ItemsPopup.IsOpen = false;
                 SearchInput.Text = "";
+                ItemsPopup.IsOpen = false;
             }
         }
 

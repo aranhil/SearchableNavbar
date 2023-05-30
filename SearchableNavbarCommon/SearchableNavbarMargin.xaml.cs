@@ -158,7 +158,7 @@ namespace SearchableNavbar
                 EnvDTE.Document doc = DTE.ActiveDocument;
                 string path = doc?.FullName ?? "";
 
-                _ = System.Threading.Tasks.Task.Run(async () =>
+                ThreadHelper.JoinableTaskFactory.Run(async () =>
                 {
                     string tags = CTagsWrapper.Parse(path);
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();

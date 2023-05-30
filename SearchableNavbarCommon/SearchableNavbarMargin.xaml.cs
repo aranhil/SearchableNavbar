@@ -132,10 +132,6 @@ namespace SearchableNavbar
                 GC.SuppressFinalize(this);
                 this.isDisposed = true;
 
-                CodeModelEvents.ElementChanged += CodeModelElementChanged;
-                CodeModelEvents.ElementAdded += CodeModelElementAdded;
-                CodeModelEvents.ElementDeleted += CodeModelElementDeleted;
-
                 Caret.PositionChanged -= Caret_PositionChanged;
             }
         }
@@ -222,10 +218,6 @@ namespace SearchableNavbar
             Events2 events = (Events2)DTE.Events;
             CodeModelEvents = events.get_CodeModelEvents(null);
 
-            CodeModelEvents.ElementChanged += CodeModelElementChanged;
-            CodeModelEvents.ElementAdded += CodeModelElementAdded;
-            CodeModelEvents.ElementDeleted += CodeModelElementDeleted;
-
             ThreadHelper.ThrowIfNotOnUIThread();
 
             UpdateFunctions();
@@ -278,30 +270,6 @@ namespace SearchableNavbar
         private void UserControl_GotFocus(object sender, RoutedEventArgs e)
         {
             FilterFunctions();
-        }
-
-        public void CodeModelElementDeleted(object Parent, CodeElement Element)
-        {
-            ThreadHelper.JoinableTaskFactory.Run(async delegate {
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                UpdateFunctions();
-            });
-        }
-
-        public void CodeModelElementAdded(CodeElement Element)
-        {
-            ThreadHelper.JoinableTaskFactory.Run(async delegate {
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                UpdateFunctions();
-            });
-        }
-
-        public void CodeModelElementChanged(CodeElement Element, vsCMChangeKind Change)
-        {
-            ThreadHelper.JoinableTaskFactory.Run(async delegate {
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                UpdateFunctions();
-            });
         }
 
         private void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e)

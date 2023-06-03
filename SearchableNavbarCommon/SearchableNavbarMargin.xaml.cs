@@ -14,8 +14,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO.Packaging;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -61,29 +64,64 @@ namespace SearchableNavbar
 
         private DTE2 DTE;
         ITextCaret Caret;
-        CodeModelEvents CodeModelEvents;
         public FrameworkElement DocumentElement = null;
 
         private bool isDisposed;
         private IWpfTextView textView;
+        private ITextBuffer textBuffer;
+        private IVsImageService2 ImageService;
+        private ITextDocumentFactoryService TextDocumentFactoryService;
 
         FunctionInfo currentInfo = null;
         List<FunctionInfo> functionLines = new List<FunctionInfo>();
         ObservableCollection<FunctionInfo> filteredFunctionLines = new ObservableCollection<FunctionInfo>();
-        IVsImageService2 ImageService;
 
-        public SearchableNavbarMargin(IWpfTextView textView, DTE2 DTE, IVsImageService2 ImageService)
+        private ManualResetEvent QueueEvent = new ManualResetEvent(false);
+        CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
+
+        bool DocumentModified = false;
+
+        public SearchableNavbarMargin(IWpfTextView textView, DTE2 DTE, IVsImageService2 ImageService, ITextDocumentFactoryService TextDocumentFactoryService)
         {
             InitializeComponent();
 
             this.DTE = DTE;
-            this.DocumentElement = textView.VisualElement;
-            this.Caret = textView.Caret;
-            this.ImageService = ImageService;
-
-            Caret.PositionChanged += Caret_PositionChanged;
-            FunctionsListBox.ItemsSource = filteredFunctionLines;
             this.textView = textView;
+            this.ImageService = ImageService;
+            this.TextDocumentFactoryService = TextDocumentFactoryService;
+
+            Caret = textView.Caret;
+            textBuffer = textView.TextBuffer;
+            DocumentElement = textView.VisualElement;
+
+            FunctionsListBox.ItemsSource = filteredFunctionLines;
+        }
+
+        private void TextBuffer_Changed(object sender, TextContentChangedEventArgs e)
+        {
+            DocumentModified = true;
+        }
+
+        async Task UpdateQueueAsync(CancellationToken cancellationToken)
+        {
+            while (true)
+            {
+                QueueEvent.WaitOne();
+                QueueEvent.Reset();
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                UpdateFunctions();
+                await TaskScheduler.Default;
+
+                await Task.Delay(1000, cancellationToken);
+            }
+        }
+
+        private void FilteredFunctionLines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            SearchableNavbarControl.Visibility = filteredFunctionLines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public FrameworkElement VisualElement
@@ -131,8 +169,6 @@ namespace SearchableNavbar
             {
                 GC.SuppressFinalize(this);
                 this.isDisposed = true;
-
-                Caret.PositionChanged -= Caret_PositionChanged;
             }
         }
 
@@ -215,12 +251,51 @@ namespace SearchableNavbar
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            Events2 events = (Events2)DTE.Events;
-            CodeModelEvents = events.get_CodeModelEvents(null);
-
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            UpdateFunctions();
+            Caret.PositionChanged += Caret_PositionChanged;
+            textBuffer.Changed += TextBuffer_Changed;
+            filteredFunctionLines.CollectionChanged += FilteredFunctionLines_CollectionChanged;
+
+            if (TextDocumentFactoryService.TryGetTextDocument(textView.TextBuffer, out ITextDocument document))
+            {
+                document.FileActionOccurred += Document_FileActionOccurred;
+            }
+
+            _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+            {
+                await TaskScheduler.Default;
+                await UpdateQueueAsync(CancellationTokenSource.Token);
+            });
+
+            QueueEvent.Set();
+        }
+
+        private void Document_FileActionOccurred(object sender, TextDocumentFileActionEventArgs e)
+        {
+            if (e.FileActionType == FileActionTypes.ContentSavedToDisk)
+            {
+                if (DocumentModified)
+                {
+                    DocumentModified = false;
+                    QueueEvent.Set();
+                }
+            }
+        }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            QueueEvent.Set();
+            CancellationTokenSource.Cancel();
+
+            Caret.PositionChanged -= Caret_PositionChanged;
+            textBuffer.Changed -= TextBuffer_Changed;
+            filteredFunctionLines.CollectionChanged -= FilteredFunctionLines_CollectionChanged;
+
+            if (TextDocumentFactoryService.TryGetTextDocument(textView.TextBuffer, out ITextDocument document))
+            {
+                document.FileActionOccurred -= Document_FileActionOccurred;
+            }
         }
 
         private void FilterFunctions()

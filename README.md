@@ -13,6 +13,13 @@
 1. After installing the extension, an additional navigation bar will be available at the top part of the active document. You can assign a shortcut to open the navigation bar and start searching by going to **Tools >> Options >> Environment >> Keyboard**, the command name is **SearchableNavbar.Open**.
 
 ## Changelog
+### Version 1.13 (04/06/2023)
+
+- The search bar will now remain hidden if there's nothing to display
+- Added the parameter list to be both displayed and searchable
+- The document is reparsed if it's saved through Visual Studio after being previously modified
+- If the initial parsing fails, a reparse can be initiated by executing the command to display the search bar
+
 ### Version 1.12 (31/05/2023)
 
 - Hotfix for lots of redundant processes being created and slowing down Visual Studio

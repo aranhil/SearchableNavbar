@@ -112,8 +112,7 @@ namespace SearchableNavbar
                 SearchableNavbarMargin listingsMargin = textviewHost.GetTextViewMargin(SearchableNavbarMargin.MarginName) as SearchableNavbarMargin;
                 if (listingsMargin != null)
                 {
-                    listingsMargin.SearchInput.Focus();
-                    listingsMargin.ItemsPopup.IsOpen = true;
+                    listingsMargin.CommandReceived();
                 }
             }
 

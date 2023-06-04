@@ -31,7 +31,7 @@ namespace SearchableNavbar
                 "--kinds-Rust=fP",
                 "--kinds-TypeScript=fm",
                 "--extras=+q",
-                "--_xformat=\"%N\t%n\"",
+                "--_xformat=\"%N\t%n\t%S\"",
                 "\"" + path + "\""
             };
 

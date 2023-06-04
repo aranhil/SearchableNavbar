@@ -24,8 +24,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using static Microsoft.VisualStudio.Threading.AsyncReaderWriterLock;
 using static System.Windows.Forms.AxHost;
+using Task = System.Threading.Tasks.Task;
 
 namespace SearchableNavbar
 {
@@ -41,6 +43,7 @@ namespace SearchableNavbar
         }
 
         public string Tag { get; set; }
+        public string Signature { get; set; }
         public string Scope { get; set; }
         public string LineNo { get; set; }
 
@@ -60,7 +63,7 @@ namespace SearchableNavbar
     }
     public partial class SearchableNavbarMargin : UserControl, IWpfTextViewMargin
     {
-        public const string MarginName = "FunctionListingsMargin";
+        public const string MarginName = "SearchableNavbarMargin";
 
         private DTE2 DTE;
         ITextCaret Caret;
@@ -119,18 +122,13 @@ namespace SearchableNavbar
             }
         }
 
-        private void FilteredFunctionLines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            SearchableNavbarControl.Visibility = filteredFunctionLines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-        }
-
         public FrameworkElement VisualElement
         {
             // Since this margin implements Canvas, this is the object which renders
             // the margin.
             get
             {
-                this.ThrowIfDisposed();
+                ThrowIfDisposed();
                 return this;
             }
         }
@@ -139,11 +137,11 @@ namespace SearchableNavbar
         {
             get
             {
-                this.ThrowIfDisposed();
+                ThrowIfDisposed();
 
                 // Since this is a horizontal margin, its width will be bound to the width of the text view.
                 // Therefore, its size is its height.
-                return this.ActualHeight;
+                return ActualHeight;
             }
         }
 
@@ -151,7 +149,7 @@ namespace SearchableNavbar
         {
             get
             {
-                this.ThrowIfDisposed();
+                ThrowIfDisposed();
 
                 // The margin should always be enabled
                 return true;
@@ -160,21 +158,21 @@ namespace SearchableNavbar
 
         public ITextViewMargin GetTextViewMargin(string marginName)
         {
-            return string.Equals(marginName, SearchableNavbarMargin.MarginName, StringComparison.OrdinalIgnoreCase) ? this : null;
+            return string.Equals(marginName, MarginName, StringComparison.OrdinalIgnoreCase) ? this : null;
         }
 
         public void Dispose()
         {
-            if (!this.isDisposed)
+            if (!isDisposed)
             {
                 GC.SuppressFinalize(this);
-                this.isDisposed = true;
+                isDisposed = true;
             }
         }
 
         private void ThrowIfDisposed()
         {
-            if (this.isDisposed)
+            if (isDisposed)
             {
                 throw new ObjectDisposedException(MarginName);
             }
@@ -195,6 +193,8 @@ namespace SearchableNavbar
                     string tags = CTagsWrapper.Parse(path);
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
+                    bool PreviouslyEmpty = functionLines.Count == 0;
+
                     try
                     {
                         functionLines.Clear();
@@ -204,15 +204,15 @@ namespace SearchableNavbar
                             string[] lines = tags.Split('\n');
                             foreach (string line in lines)
                             {
-                                // Split each line into fields
                                 string[] fields = line.Split('\t');
 
-                                if (fields.Length == 2)
+                                if (fields.Length == 3)
                                 {
                                     FunctionInfo newFunctionInfo = new FunctionInfo()
                                     {
                                         Tag = fields[0],
                                         LineNo = fields[1],
+                                        Signature = fields[2].Replace("\r", "").Replace(",", ", "),
                                         Scope = ""
                                     };
 
@@ -242,6 +242,18 @@ namespace SearchableNavbar
                     catch { }
 
                     FilterFunctions();
+
+                    if(PreviouslyEmpty && functionLines.Count > 0)
+                    {
+                        SearchableNavbarControl.Visibility = Visibility.Visible;
+
+                        try
+                        {
+                            UpdateOverlayFromCurrentCaretPosition(textView.Caret.Position.BufferPosition);
+                            SelectSearchResult(currentInfo);
+                        }
+                        catch { }
+                    }
                 });
             }
             catch(Exception)
@@ -255,13 +267,13 @@ namespace SearchableNavbar
 
             Caret.PositionChanged += Caret_PositionChanged;
             textBuffer.Changed += TextBuffer_Changed;
-            filteredFunctionLines.CollectionChanged += FilteredFunctionLines_CollectionChanged;
 
             if (TextDocumentFactoryService.TryGetTextDocument(textView.TextBuffer, out ITextDocument document))
             {
                 document.FileActionOccurred += Document_FileActionOccurred;
             }
 
+            CancellationTokenSource = new CancellationTokenSource();
             _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
                 await TaskScheduler.Default;
@@ -290,7 +302,6 @@ namespace SearchableNavbar
 
             Caret.PositionChanged -= Caret_PositionChanged;
             textBuffer.Changed -= TextBuffer_Changed;
-            filteredFunctionLines.CollectionChanged -= FilteredFunctionLines_CollectionChanged;
 
             if (TextDocumentFactoryService.TryGetTextDocument(textView.TextBuffer, out ITextDocument document))
             {
@@ -306,7 +317,7 @@ namespace SearchableNavbar
             foreach (FunctionInfo functionInfo in functionLines)
             {
                 bool allWordsMatch = true;
-                string fullTextLower = (functionInfo.Scope + functionInfo.Tag).ToLowerInvariant();
+                string fullTextLower = (functionInfo.Scope + functionInfo.Tag + functionInfo.Signature).ToLowerInvariant();
 
                 foreach (string word in words)
                 {
@@ -353,54 +364,64 @@ namespace SearchableNavbar
 
             try
             {
-                SnapshotPoint? point = e.NewPosition.Point.GetPoint(textView.TextBuffer, e.NewPosition.Affinity);
-
-                if (point.HasValue)
-                {
-                    ITextSnapshotLine line = point.Value.GetContainingLine();
-
-                    int lineNumber = line.LineNumber + 1;
-                    currentInfo = null;
-
-                    List<FunctionInfo> orderedFunctions = functionLines.OrderBy(x => int.Parse(x.LineNo)).ToList();
-                    if(orderedFunctions.Count == 1)
-                    {
-                        currentInfo = orderedFunctions[0];
-                    }
-                    else
-                    {
-                        for (int i = 1; i < orderedFunctions.Count; i++)
-                        {
-                            if (lineNumber < int.Parse(orderedFunctions[i].LineNo))
-                            {
-                                if (i > 0)
-                                {
-                                    currentInfo = orderedFunctions[i - 1];
-                                }
-                                break;
-                            }
-
-                            if(i == orderedFunctions.Count - 1)
-                            {
-                                currentInfo = orderedFunctions[i];
-                            }
-                        }
-                    }
-
-                    if(currentInfo != null)
-                    {
-                        Overlay.DataContext = currentInfo;
-                    }
-                }
+                UpdateOverlayFromCurrentCaretPosition(e?.NewPosition.Point?.GetPoint(textView.TextBuffer, e.NewPosition.Affinity));
             }
             catch { }
         }
 
+        private void UpdateOverlayFromCurrentCaretPosition(SnapshotPoint? snapshotPoint)
+        {
+            if (snapshotPoint.HasValue)
+            {
+                ITextSnapshotLine line = snapshotPoint.Value.GetContainingLine();
+
+                int lineNumber = line.LineNumber + 1;
+                currentInfo = null;
+
+                List<FunctionInfo> orderedFunctions = functionLines.OrderBy(x => int.Parse(x.LineNo)).ToList();
+                if (orderedFunctions.Count == 1)
+                {
+                    currentInfo = orderedFunctions[0];
+                }
+                else
+                {
+                    for (int i = 1; i < orderedFunctions.Count; i++)
+                    {
+                        if (lineNumber < int.Parse(orderedFunctions[i].LineNo))
+                        {
+                            if (i > 0)
+                            {
+                                currentInfo = orderedFunctions[i - 1];
+                            }
+                            break;
+                        }
+
+                        if (i == orderedFunctions.Count - 1)
+                        {
+                            currentInfo = orderedFunctions[i];
+                        }
+                    }
+                }
+
+                if (currentInfo != null)
+                {
+                    Overlay.DataContext = currentInfo;
+                }
+            }
+        }
 
         private void FunctionsList_TextChanged(object sender, TextChangedEventArgs e)
         {
             FilterFunctions();
             ItemsPopup.IsOpen = true;
+        }
+
+        private void ClosePopup()
+        {
+            SearchInput.Text = "";
+            Overlay.Visibility = Visibility.Visible;
+            ItemsPopup.IsOpen = false;
+            SearchableNavbarControl.Visibility = functionLines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         int selectedSearchResult = -1;
@@ -491,10 +512,7 @@ namespace SearchableNavbar
                     oldSelectedSearchResult.IsSelected = false;
                 }
 
-                if(newSelectedSearchResult != null)
-                {
-                    SelectSearchResult(newSelectedSearchResult);
-                }
+                SelectSearchResult(newSelectedSearchResult);
             }
 
             if(e.Key == Key.Enter)
@@ -510,16 +528,12 @@ namespace SearchableNavbar
                     }
                     catch { }
 
-                    SearchInput.Text = "";
-                    Overlay.Visibility = Visibility.Visible;
-                    ItemsPopup.IsOpen = false;
+                    ClosePopup();
                 }
             }
             else if(e.Key == Key.Escape)
             {
-                SearchInput.Text = "";
-                Overlay.Visibility = Visibility.Visible;
-                ItemsPopup.IsOpen = false;
+                ClosePopup();
 
                 textView.VisualElement.Focus();
             }
@@ -527,20 +541,23 @@ namespace SearchableNavbar
 
         private void SelectSearchResult(FunctionInfo newSelectedSearchResult)
         {
-            newSelectedSearchResult.IsSelected = true;
-            selectedSearchResult = filteredFunctionLines.IndexOf(newSelectedSearchResult);
-
-            if(selectedSearchResult >= 0)
+            if(newSelectedSearchResult != null)
             {
-                Overlay.DataContext = newSelectedSearchResult;
+                newSelectedSearchResult.IsSelected = true;
+                selectedSearchResult = filteredFunctionLines.IndexOf(newSelectedSearchResult);
 
-                VirtualizingStackPanel virtualizingStackPanel = GetChildOfType<VirtualizingStackPanel>(FunctionsListBox);
-                if (virtualizingStackPanel != null)
+                if (selectedSearchResult >= 0)
                 {
-                    virtualizingStackPanel.BringIndexIntoViewPublic(selectedSearchResult);
-                    ListBoxItem listBoxItem = FunctionsListBox.ItemContainerGenerator.ContainerFromItem(newSelectedSearchResult) as ListBoxItem;
+                    Overlay.DataContext = newSelectedSearchResult;
 
-                    listBoxItem?.BringIntoView();
+                    VirtualizingStackPanel virtualizingStackPanel = GetChildOfType<VirtualizingStackPanel>(FunctionsListBox);
+                    if (virtualizingStackPanel != null)
+                    {
+                        virtualizingStackPanel.BringIndexIntoViewPublic(selectedSearchResult);
+                        ListBoxItem listBoxItem = FunctionsListBox.ItemContainerGenerator.ContainerFromItem(newSelectedSearchResult) as ListBoxItem;
+
+                        listBoxItem?.BringIntoView();
+                    }
                 }
             }
         }
@@ -566,10 +583,7 @@ namespace SearchableNavbar
             ItemsPopup.IsOpen = true;
             IgnoreNextUnfocus = false;
 
-            if (currentInfo != null)
-            {
-                SelectSearchResult(currentInfo);
-            }
+            SelectSearchResult(currentInfo);
         }
 
         private void SearchInput_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -581,9 +595,7 @@ namespace SearchableNavbar
             }
             else
             {
-                Overlay.Visibility = Visibility.Visible;
-                SearchInput.Text = "";
-                ItemsPopup.IsOpen = false;
+                ClosePopup();
             }
         }
 
@@ -626,9 +638,24 @@ namespace SearchableNavbar
                 }
                 catch { }
 
-                SearchInput.Text = "";
-                Overlay.Visibility = Visibility.Visible;
-                ItemsPopup.IsOpen = false;
+                ClosePopup();
+            }
+        }
+
+        public void CommandReceived()
+        {
+            SearchableNavbarControl.Visibility = Visibility.Visible;
+
+#pragma warning disable VSTHRD001
+            _ = Dispatcher.BeginInvoke((Action)delegate
+            {
+                Keyboard.Focus(SearchInput);
+            }, DispatcherPriority.Render);
+#pragma warning restore VSTHRD001
+
+            if (filteredFunctionLines.Count == 0)
+            {
+                QueueEvent.Set();
             }
         }
     }

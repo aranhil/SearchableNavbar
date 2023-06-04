@@ -8,7 +8,9 @@
 
 - Hotfix for lots of redundant processes being created and slowing down Visual Studio
 
-### Version 1.13
+### Version 1.13 (04/06/2023)
 
-- Searchbar now stays hidden if there's nothing to show
-- A document is parsed again if it's saved through Visual Studio after being previously modified
+- The search bar will now remain hidden if there's nothing to display
+- Added the parameter list to be both displayed and searchable
+- The document is reparsed if it's saved through Visual Studio after being previously modified
+- If the initial parsing fails, a reparse can be initiated by executing the command to display the search bar

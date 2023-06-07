@@ -6,7 +6,7 @@
 
 *Searchable Navbar* is a Visual Studio extension that replaces the standard navigation bar with a searchable navigation bar. It uses [Universal Ctags](https://github.com/universal-ctags/ctags) to generate the function tags, so any language supported by Universal Ctags is also supported by this extension.
 
-![image](https://github.com/aranhil/SearchableNavbar/assets/755601/c3d62dd8-5196-4813-97d8-54e7f12a53a8)
+![image](https://github.com/aranhil/SearchableNavbar/assets/755601/76ac46de-6884-49a3-ad49-dc58b503fe9b)
 
 ## Setting up in Visual Studio
 ## Installation

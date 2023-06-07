@@ -11,6 +11,7 @@
 ## Setting up in Visual Studio
 ## Installation
 1. After installing the extension, an additional navigation bar will be available at the top part of the active document. You can assign a shortcut to open the navigation bar and start searching by going to **Tools >> Options >> Environment >> Keyboard**, the command name is **SearchableNavbar.Open**.
+2. Optionally, you can disable the default Visual Studio navigation bar from **Tools >> Options >> Text Editor >> (Language) >> Navigation Bar**
 
 ## Changelog
 ### Version 1.13 (04/06/2023)

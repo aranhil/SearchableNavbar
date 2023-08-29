@@ -14,6 +14,10 @@
 2. Optionally, you can disable the default Visual Studio navigation bar from **Tools >> Options >> Text Editor >> (Language) >> Navigation Bar**
 
 ## Changelog
+### Version 1.14 (29/08/2023)
+
+- Added support for multiple visible documents
+
 ### Version 1.13 (04/06/2023)
 
 - The search bar will now remain hidden if there's nothing to display

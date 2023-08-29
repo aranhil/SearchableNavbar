@@ -14,3 +14,7 @@
 - Added the parameter list to be both displayed and searchable
 - The document is reparsed if it's saved through Visual Studio after being previously modified
 - If the initial parsing fails, a reparse can be initiated by executing the command to display the search bar
+
+### Version 1.14 (29/08/2023)
+
+- Added support for multiple visible documents

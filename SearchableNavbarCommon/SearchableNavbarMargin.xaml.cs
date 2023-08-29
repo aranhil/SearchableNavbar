@@ -74,6 +74,7 @@ namespace SearchableNavbar
         private ITextBuffer textBuffer;
         private IVsImageService2 ImageService;
         private ITextDocumentFactoryService TextDocumentFactoryService;
+        private string FilePath = "";
 
         FunctionInfo currentInfo = null;
         List<FunctionInfo> functionLines = new List<FunctionInfo>();
@@ -96,6 +97,11 @@ namespace SearchableNavbar
             Caret = textView.Caret;
             textBuffer = textView.TextBuffer;
             DocumentElement = textView.VisualElement;
+
+            if (TextDocumentFactoryService.TryGetTextDocument(textView.TextBuffer, out ITextDocument document))
+            {
+                FilePath = document.FilePath;
+            }
 
             FunctionsListBox.ItemsSource = filteredFunctionLines;
         }
@@ -186,7 +192,7 @@ namespace SearchableNavbar
             {
 
                 EnvDTE.Document doc = DTE.ActiveDocument;
-                string path = doc?.FullName ?? "";
+                string path = FilePath.Length > 0 ? FilePath : (doc?.FullName ?? "");
 
                 ThreadHelper.JoinableTaskFactory.Run(async () =>
                 {

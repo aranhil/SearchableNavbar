@@ -12,7 +12,7 @@ namespace SearchableNavbar
 {
     class CTagsWrapper
     {
-        public static string Parse(string path)
+        public static string Parse(string path, string ignorableMacros)
         {
             string assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string exePath = Path.Combine(assemblyDirectory, "ctags.exe");
@@ -32,6 +32,7 @@ namespace SearchableNavbar
                 "--kinds-TypeScript=fm",
                 "--extras=+q",
                 "--_xformat=\"%N\t%n\t%S\"",
+                ignorableMacros.Length > 0 ? "-I " + ignorableMacros : "",
                 "\"" + path + "\""
             };
 

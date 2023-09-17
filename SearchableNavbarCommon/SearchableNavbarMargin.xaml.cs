@@ -14,8 +14,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.IO.Packaging;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -75,6 +77,7 @@ namespace SearchableNavbar
         private IVsImageService2 ImageService;
         private ITextDocumentFactoryService TextDocumentFactoryService;
         private string FilePath = "";
+        private string IgnorableMacros = "";
 
         FunctionInfo currentInfo = null;
         List<FunctionInfo> functionLines = new List<FunctionInfo>();
@@ -196,7 +199,7 @@ namespace SearchableNavbar
 
                 ThreadHelper.JoinableTaskFactory.Run(async () =>
                 {
-                    string tags = CTagsWrapper.Parse(path);
+                    string tags = CTagsWrapper.Parse(path, IgnorableMacros);
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
                     bool PreviouslyEmpty = functionLines.Count == 0;
@@ -270,6 +273,8 @@ namespace SearchableNavbar
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+
+            LoadIgnorableMacros();
 
             Caret.PositionChanged += Caret_PositionChanged;
             textBuffer.Changed += TextBuffer_Changed;
@@ -663,6 +668,22 @@ namespace SearchableNavbar
             {
                 QueueEvent.Set();
             }
+        }
+
+        private void LoadIgnorableMacros()
+        {
+            try
+            {
+                string assemblyLocation = Assembly.GetExecutingAssembly().Location;
+                string extensionDirectory = Path.GetDirectoryName(assemblyLocation);
+                string fullPath = Path.Combine(extensionDirectory, "Resources", "MACROS_TO_IGNORE.txt");
+
+                if (File.Exists(fullPath))
+                {
+                    IgnorableMacros = File.ReadAllText(fullPath);
+                }
+            }
+            catch {}
         }
     }
 }

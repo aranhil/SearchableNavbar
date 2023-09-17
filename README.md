@@ -14,6 +14,10 @@
 2. Optionally, you can disable the default Visual Studio navigation bar from **Tools >> Options >> Text Editor >> (Language) >> Navigation Bar**
 
 ## Changelog
+### Version 1.15 (17/09/2023)
+
+- Added support for ignorable macros in C/C++ and added all the Unreal Engine macros to the list by default
+
 ### Version 1.14 (29/08/2023)
 
 - Added support for multiple visible documents

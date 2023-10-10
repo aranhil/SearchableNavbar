@@ -197,6 +197,11 @@ namespace SearchableNavbar
                 EnvDTE.Document doc = DTE.ActiveDocument;
                 string path = FilePath.Length > 0 ? FilePath : (doc?.FullName ?? "");
 
+                if(ExcludeFileType(path))
+                {
+                    return;
+                }
+
                 ThreadHelper.JoinableTaskFactory.Run(async () =>
                 {
                     string tags = CTagsWrapper.Parse(path, IgnorableMacros);
@@ -684,6 +689,26 @@ namespace SearchableNavbar
                 }
             }
             catch {}
+        }
+
+        private bool ExcludeFileType(string path)
+        {
+            try
+            {
+                string assemblyLocation = Assembly.GetExecutingAssembly().Location;
+                string extensionDirectory = Path.GetDirectoryName(assemblyLocation);
+                string fullPath = Path.Combine(extensionDirectory, "Resources", "EXTENSIONS_TO_IGNORE.txt");
+
+                if (File.Exists(fullPath))
+                {
+                    string extensionsToExclude = File.ReadAllText(fullPath).ToLower();
+                    string currentExtension = System.IO.Path.GetExtension(path).ToLower();
+                    return extensionsToExclude.Split(',').Any((string extension) => { return currentExtension == extension; });
+                }
+            }
+            catch { }
+
+            return false;
         }
     }
 }

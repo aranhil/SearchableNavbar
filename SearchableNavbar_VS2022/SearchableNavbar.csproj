@@ -109,6 +109,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="Resources\EXTENSIONS_TO_IGNORE.txt">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\MACROS_TO_IGNORE.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>

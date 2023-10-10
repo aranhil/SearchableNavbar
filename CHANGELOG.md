@@ -22,3 +22,7 @@
 ### Version 1.15 (17/09/2023)
 
 - Added support for ignorable macros in C/C++ and added all the Unreal Engine macros to the list by default
+
+### Version 1.16 (10/10/2023)
+
+- Added support for ignorable file extensions

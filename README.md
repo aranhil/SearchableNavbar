@@ -11,7 +11,7 @@
 ## How to set up
 1. After installing the extension, an additional navigation bar will be available at the top part of the active document. You can assign a shortcut to open the navigation bar and start searching by going to **Tools >> Options >> Environment >> Keyboard**, the command name is **SearchableNavbar.Open**.
 2. Optionally, you can disable the default Visual Studio navigation bar from **Tools >> Options >> Text Editor >> (Language) >> Navigation Bar**
-3. If you want certain extensions to be ignored, you can add them to this file: **%LocalAppData%\Microsoft\VisualStudio\\<Visual Studio version>\Extensions\\<folder that contains SearchableNavbar.dll>\Resources\EXTENSIONS_TO_IGNORE.txt** (separated by a comma, for example: ".cpp,.h")
+3. If you want certain extensions to be ignored, you can add them to this file: **%LocalAppData%\Microsoft\VisualStudio\\\<Visual Studio version>\Extensions\\\<folder that contains SearchableNavbar.dll>\Resources\EXTENSIONS_TO_IGNORE.txt** (separated by a comma, for example: ".cpp,.h")
 4. If you want certain C/C++ macros to be ignored, search in the same path as above for **MACROS_TO_IGNORE.txt**
 
 ## Changelog

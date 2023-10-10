@@ -197,7 +197,7 @@ namespace SearchableNavbar
                 EnvDTE.Document doc = DTE.ActiveDocument;
                 string path = FilePath.Length > 0 ? FilePath : (doc?.FullName ?? "");
 
-                if(ExcludeFileType(path))
+                if(ExcludeFileExtension(path))
                 {
                     return;
                 }
@@ -691,7 +691,7 @@ namespace SearchableNavbar
             catch {}
         }
 
-        private bool ExcludeFileType(string path)
+        private bool ExcludeFileExtension(string path)
         {
             try
             {

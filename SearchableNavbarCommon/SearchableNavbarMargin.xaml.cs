@@ -1,5 +1,6 @@
 ﻿using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.PlatformUI;
@@ -12,6 +13,7 @@ using Microsoft.VisualStudio.VCProjectEngine;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -28,6 +30,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static Microsoft.VisualStudio.Threading.AsyncReaderWriterLock;
+using static Microsoft.VisualStudio.VSConstants;
 using static System.Windows.Forms.AxHost;
 using Task = System.Threading.Tasks.Task;
 
@@ -76,8 +79,8 @@ namespace SearchableNavbar
         private ITextBuffer textBuffer;
         private IVsImageService2 ImageService;
         private ITextDocumentFactoryService TextDocumentFactoryService;
+        private SearchableNavbarPackage Package;
         private string FilePath = "";
-        private string IgnorableMacros = "";
 
         FunctionInfo currentInfo = null;
         List<FunctionInfo> functionLines = new List<FunctionInfo>();
@@ -90,6 +93,7 @@ namespace SearchableNavbar
 
         public SearchableNavbarMargin(IWpfTextView textView, DTE2 DTE, IVsImageService2 ImageService, ITextDocumentFactoryService TextDocumentFactoryService)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             InitializeComponent();
 
             this.DTE = DTE;
@@ -193,18 +197,34 @@ namespace SearchableNavbar
 
             try
             {
+                if(Package == null)
+                {
+                    var vsShell = (IVsShell)ServiceProvider.GlobalProvider.GetService(typeof(IVsShell));
+                    if(vsShell != null)
+                    {
+                        IVsPackage package = null;
+                        if (vsShell.IsPackageLoaded(new Guid(SearchableNavbarPackage.PackageGuidString), out package) == S_OK)
+                        {
+                            Package = (SearchableNavbarPackage)package;
+                        }
+                        else if(ErrorHandler.Succeeded(vsShell.LoadPackage(new Guid(SearchableNavbarPackage.PackageGuidString), out package)))
+                        {
+                            Package = package as SearchableNavbarPackage;
+                        }
+                    }
+                }
 
                 EnvDTE.Document doc = DTE.ActiveDocument;
                 string path = FilePath.Length > 0 ? FilePath : (doc?.FullName ?? "");
 
-                if(ExcludeFileExtension(path))
+                if(ExcludeFileExtension(path, Package))
                 {
                     return;
                 }
 
                 ThreadHelper.JoinableTaskFactory.Run(async () =>
                 {
-                    string tags = CTagsWrapper.Parse(path, IgnorableMacros);
+                    string tags = CTagsWrapper.Parse(path, Package);
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
                     bool PreviouslyEmpty = functionLines.Count == 0;
@@ -222,15 +242,17 @@ namespace SearchableNavbar
 
                                 if (fields.Length == 3)
                                 {
+                                    fields[2] = fields[2].Replace("\r", "").Replace(",", ", ");
+
                                     FunctionInfo newFunctionInfo = new FunctionInfo()
                                     {
                                         Tag = fields[0],
                                         LineNo = fields[1],
-                                        Signature = fields[2].Replace("\r", "").Replace(",", ", "),
+                                        Signature = fields[2].Length == 1 && fields[2][0] == '-' ? "" : fields[2],
                                         Scope = ""
                                     };
 
-                                    int index = functionLines.FindIndex(x => x.LineNo == newFunctionInfo.LineNo);
+                                    int index = functionLines.FindIndex(x => x.LineNo == newFunctionInfo.LineNo && (x.Tag.Contains(newFunctionInfo.Tag) || newFunctionInfo.Tag.Contains(x.Tag)));
                                     if (index >= 0)
                                     {
                                         if (newFunctionInfo.Tag.Length > functionLines[index].Tag.Length)
@@ -278,8 +300,6 @@ namespace SearchableNavbar
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-
-            LoadIgnorableMacros();
 
             Caret.PositionChanged += Caret_PositionChanged;
             textBuffer.Changed += TextBuffer_Changed;
@@ -675,40 +695,15 @@ namespace SearchableNavbar
             }
         }
 
-        private void LoadIgnorableMacros()
+        private bool ExcludeFileExtension(string path, SearchableNavbarPackage package)
         {
-            try
+            if(package == null || package.IgnoredFileExtensions.Length == 0)
             {
-                string assemblyLocation = Assembly.GetExecutingAssembly().Location;
-                string extensionDirectory = Path.GetDirectoryName(assemblyLocation);
-                string fullPath = Path.Combine(extensionDirectory, "Resources", "MACROS_TO_IGNORE.txt");
-
-                if (File.Exists(fullPath))
-                {
-                    IgnorableMacros = File.ReadAllText(fullPath);
-                }
+                return false;
             }
-            catch {}
-        }
 
-        private bool ExcludeFileExtension(string path)
-        {
-            try
-            {
-                string assemblyLocation = Assembly.GetExecutingAssembly().Location;
-                string extensionDirectory = Path.GetDirectoryName(assemblyLocation);
-                string fullPath = Path.Combine(extensionDirectory, "Resources", "EXTENSIONS_TO_IGNORE.txt");
-
-                if (File.Exists(fullPath))
-                {
-                    string extensionsToExclude = File.ReadAllText(fullPath).ToLower();
-                    string currentExtension = System.IO.Path.GetExtension(path).ToLower();
-                    return extensionsToExclude.Split(',').Any((string extension) => { return currentExtension == extension; });
-                }
-            }
-            catch { }
-
-            return false;
+            string currentExtension = System.IO.Path.GetExtension(path).ToLower();
+            return package.IgnoredFileExtensions.Split(',').Any((string extension) => { return currentExtension == extension; });
         }
     }
 }

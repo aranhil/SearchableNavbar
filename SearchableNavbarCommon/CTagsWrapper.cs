@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.Shell;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,7 +13,7 @@ namespace SearchableNavbar
 {
     class CTagsWrapper
     {
-        public static string Parse(string path, string ignorableMacros)
+        public static string Parse(string path, SearchableNavbarPackage package)
         {
             string assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string exePath = Path.Combine(assemblyDirectory, "ctags.exe");
@@ -20,7 +21,7 @@ namespace SearchableNavbar
             string[] args = new string[] {
                 "-x",
                 "--fields=S",
-                "--kinds-C++=fp",
+                GetCppKindsFromPackage(package),
                 "--kinds-C#=m",
                 "--kinds-Java=m",
                 "--kinds-JavaScript=mf",
@@ -30,9 +31,10 @@ namespace SearchableNavbar
                 "--kinds-Ruby=f",
                 "--kinds-Rust=fP",
                 "--kinds-TypeScript=fm",
-                "--extras=+q",
+                GetExtraOptionsFromPackage(package),
                 "--_xformat=\"%N\t%n\t%S\"",
-                ignorableMacros.Length > 0 ? "-I " + ignorableMacros : "",
+                GetSortOptionFromPackage(package),
+                GetIgnoredCppMacrosFromPackage(package),
                 "\"" + path + "\""
             };
 
@@ -64,6 +66,72 @@ namespace SearchableNavbar
             }
 
             return output;
+        }
+
+        private static string GetIgnoredCppMacrosFromPackage(SearchableNavbarPackage package)
+        {
+            if(package == null || package.IgnoredCppMacros.Length == 0)
+            {
+                return "";
+            }
+
+            return "-I " + package.IgnoredCppMacros;
+        }
+
+        private static string GetExtraOptionsFromPackage(SearchableNavbarPackage package)
+        {
+            if(package == null)
+            {
+                return "--extras=+q";
+            }
+
+            string returnString = "--extras=";
+            if(package.ShowFullyQualifiedTags) returnString += "+q";
+            if(!package.ShowAnonymousTags) returnString += "-{anonymous}";
+            return returnString;
+        }
+
+        private static string GetSortOptionFromPackage(SearchableNavbarPackage package)
+        {
+            if(package == null)
+            {
+                return "--sort=yes";
+            }
+
+            return "--sort=" + (package.SortAlphabetically ? "yes" : "no");
+        }
+
+        private static string GetCppKindsFromPackage(SearchableNavbarPackage package)
+        {
+            if(package == null)
+            {
+                return "--kinds-C++=fp";
+            }
+
+            string returnString = "--kinds-C++=";
+            if (package.CppShowMacroDefinitions) returnString += "d";
+            if (package.CppShowEnumerators) returnString += "e";
+            if (package.CppShowFunctionDefinitions) returnString += "f";
+            if (package.CppShowEnumerationNames) returnString += "g";
+            //if (package.CppShowIncludedHeaderFiles) returnString += "h";
+            if (package.CppShowLocalVariables) returnString += "l";
+            if (package.CppShowClassStructUnionMembers) returnString += "m";
+            if (package.CppShowFunctionPrototypes) returnString += "p";
+            if (package.CppShowStructureNames) returnString += "s";
+            if (package.CppShowTypedefs) returnString += "t";
+            if (package.CppShowUnionNames) returnString += "u";
+            if (package.CppShowVariableDefinitions) returnString += "v";
+            if (package.CppShowExternalAndForwardVariableDeclarations) returnString += "x";
+            if (package.CppShowFunctionParameters) returnString += "z";
+            if (package.CppShowGotoLabels) returnString += "L";
+            if (package.CppShowMacroParameters) returnString += "D";
+            if (package.CppShowClasses) returnString += "c";
+            if (package.CppShowNamespaces) returnString += "n";
+            //if (package.CppShowNamespaceAliases) returnString += "A";
+            //if (package.CppShowNamesImportedViaUsingScopeSymbol) returnString += "N";
+            if (package.CppShowUsingNamespaceStatements) returnString += "U";
+            if (package.CppShowTemplateParameters) returnString += "Z";
+            return returnString;
         }
     }
 }

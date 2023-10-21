@@ -68,6 +68,12 @@
     <StartArguments>/rootsuffix Exp</StartArguments>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="OptionPages\CppPageGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="OptionPages\OptionPageGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -107,12 +113,6 @@
   <ItemGroup>
     <Content Include="ctags.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Resources\EXTENSIONS_TO_IGNORE.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Resources\MACROS_TO_IGNORE.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\search-engine-128px.png">

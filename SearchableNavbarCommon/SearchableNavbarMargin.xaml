@@ -24,6 +24,7 @@
             <TextBlock Text="{Binding Path=Tag}" Foreground="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" VerticalAlignment="Center"/>
             <TextBlock Text="{Binding Path=Signature}" Foreground="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" Opacity="0.6" VerticalAlignment="Center"/>
         </DockPanel>
+        <!--<Button HorizontalAlignment="Right" Content="Options" Click="OptionsButton_Click"/>-->
         <Popup x:Name="ItemsPopup" Placement="Relative" VerticalOffset="24">
             <ListBox x:Name="FunctionsListBox" ItemsSource="{Binding}" Style="{DynamicResource ResultsListBox}" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="500" Focusable="False" SelectionChanged="FunctionsListBox_SelectionChanged" MinWidth="{Binding ActualWidth, ElementName=SearchInput}">
                 <ListBox.ItemTemplate>

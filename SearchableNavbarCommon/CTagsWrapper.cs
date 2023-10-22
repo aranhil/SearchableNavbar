@@ -32,7 +32,7 @@ namespace SearchableNavbar
                 "--kinds-Rust=fP",
                 "--kinds-TypeScript=fm",
                 GetExtraOptionsFromPackage(package),
-                "--_xformat=\"%N\t%n\t%S\"",
+                "--_xformat=\"%N\t%n\t%S\t%k\"",
                 GetSortOptionFromPackage(package),
                 GetIgnoredCppMacrosFromPackage(package),
                 "\"" + path + "\""

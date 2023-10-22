@@ -23,7 +23,7 @@
             </TextBox.ContextMenu>
         </TextBox>
         <DockPanel x:Name="Overlay" IsHitTestVisible="False" Margin="5,0">
-            <imaging:CrispImage Width="16" Height="16" Margin="0,0,2,0" Moniker="{x:Static catalog:KnownMonikers.MethodPublic}" />
+            <imaging:CrispImage Width="16" Height="16" Margin="0,0,2,0" Moniker="{Binding Path=Moniker}" />
             <TextBlock Text="{Binding Path=Scope}" Foreground="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" Opacity="0.6" VerticalAlignment="Center"/>
             <TextBlock Text="{Binding Path=Tag}" Foreground="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" VerticalAlignment="Center"/>
             <TextBlock Text="{Binding Path=Signature}" Foreground="{DynamicResource {x:Static vsshell:CommonControlsColors.ComboBoxListItemTextBrushKey}}" Opacity="0.6" VerticalAlignment="Center"/>
@@ -34,7 +34,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <DockPanel MouseDown="DockPanel_MouseDown">
-                            <imaging:CrispImage Width="16" Height="16" Margin="-4,0,2,0" Moniker="{x:Static catalog:KnownMonikers.MethodPublic}" />
+                            <imaging:CrispImage Width="16" Height="16" Margin="-4,0,2,0" Moniker="{Binding Path=Moniker}" />
                             <TextBlock Text="{Binding Path=Scope}" Opacity="0.6"/>
                             <TextBlock Text="{Binding Path=Tag}"/>
                             <TextBlock Text="{Binding Path=Signature}" Opacity="0.6"/>

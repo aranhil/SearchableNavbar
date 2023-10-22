@@ -51,6 +51,7 @@ namespace SearchableNavbar
         public string Signature { get; set; }
         public string Scope { get; set; }
         public string LineNo { get; set; }
+        public ImageMoniker Moniker { get; set; }
 
         public BitmapSource imageSource;
         public BitmapSource ImageSource
@@ -232,7 +233,7 @@ namespace SearchableNavbar
                             {
                                 string[] fields = line.Split('\t');
 
-                                if (fields.Length == 3)
+                                if (fields.Length == 4)
                                 {
                                     if(Package.ShowTagSignature)
                                     {
@@ -248,7 +249,8 @@ namespace SearchableNavbar
                                         Tag = fields[0],
                                         LineNo = fields[1],
                                         Signature = fields[2].Length == 1 && fields[2][0] == '-' ? "" : fields[2],
-                                        Scope = ""
+                                        Scope = "",
+                                        Moniker = GetMonikerFromLetter(fields[3])
                                     };
 
                                     int index = functionLines.FindIndex(x => x.LineNo == newFunctionInfo.LineNo && (x.Tag.Contains(newFunctionInfo.Tag) || newFunctionInfo.Tag.Contains(x.Tag)));
@@ -294,6 +296,33 @@ namespace SearchableNavbar
             catch(Exception)
             {
             }
+        }
+
+        private ImageMoniker GetMonikerFromLetter(string letter)
+        {
+            if(letter.Length == 0)
+            {
+                return KnownMonikers.Method;
+            }
+
+            if (letter[0] == 'f') return KnownMonikers.Method;
+            if (letter[0] == 'p') return KnownMonikers.MethodShortcut;
+            if (letter[0] == 'c') return KnownMonikers.Class;
+            if (letter[0] == 'n') return KnownMonikers.Namespace;
+            if (letter[0] == 'd') return KnownMonikers.MacroPublic;
+            if (letter[0] == 'g') return KnownMonikers.EnumerationPublic;
+            if (letter[0] == 'e') return KnownMonikers.EnumerationItemPublic;
+            if (letter[0] == 's') return KnownMonikers.Structure;
+            if (letter[0] == 'l') return KnownMonikers.LocalVariable;
+            if (letter[0] == 't') return KnownMonikers.TypeDefinition;
+            if (letter[0] == 'z') return KnownMonikers.Parameter;
+            if (letter[0] == 'D') return KnownMonikers.Parameter;
+            if (letter[0] == 'u') return KnownMonikers.Union;
+            if (letter[0] == 'x') return KnownMonikers.ExternalVariableValue;
+            if (letter[0] == 'U') return KnownMonikers.NamespaceShortcut;
+            if (letter[0] == 'Z') return KnownMonikers.Parameter;
+
+            return KnownMonikers.Method;
         }
 
         private void LoadPackage()

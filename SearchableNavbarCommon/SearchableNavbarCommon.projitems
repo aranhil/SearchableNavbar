@@ -11,6 +11,15 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CTagsWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FocusCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OptionPages\CppPageGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)OptionPages\CSharpPageGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)OptionPages\OptionPageGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)SearchableNavbarPackage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SearchableNavbarMarginFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SearchableNavbarMargin.xaml.cs" />

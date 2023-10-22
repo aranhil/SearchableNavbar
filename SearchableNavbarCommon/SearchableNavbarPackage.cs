@@ -58,6 +58,11 @@ namespace SearchableNavbar
             cppPage.SettingsChanged -= optionsChanged;
         }
 
+        public void ShowSettings()
+        {
+            ShowOptionPage(typeof(OptionPageGrid));
+        }
+
         public bool SortAlphabetically
         {
             get

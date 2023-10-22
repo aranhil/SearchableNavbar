@@ -31,6 +31,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static Microsoft.VisualStudio.Threading.AsyncReaderWriterLock;
 using static Microsoft.VisualStudio.VSConstants;
+using static SearchableNavbar.SearchableNavbarMargin;
 using static System.Windows.Forms.AxHost;
 using Task = System.Threading.Tasks.Task;
 
@@ -899,6 +900,16 @@ namespace SearchableNavbar
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Using Namespace Statements", value => Package.CppShowUsingNamespaceStatements = value, () => Package.CppShowUsingNamespaceStatements);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Template Parameters", value => Package.CppShowTemplateParameters = value, () => Package.CppShowTemplateParameters);
             }
+
+            SearchInputContextMenu.Items.Add(new Separator());
+            MenuItem settingsMenuItem = new MenuItem { Header = "Options..." };
+            settingsMenuItem.Click += SettingsMenuItem_Click;
+            SearchInputContextMenu.Items.Add(settingsMenuItem);
+        }
+
+        private void SettingsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Package?.ShowSettings();
         }
     }
 }

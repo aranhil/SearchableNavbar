@@ -82,6 +82,7 @@ namespace SearchableNavbar
         private ITextDocumentFactoryService TextDocumentFactoryService;
         private SearchableNavbarPackage Package;
         private string FilePath = "";
+        private string FileType = "";
 
         FunctionInfo currentInfo = null;
         List<FunctionInfo> functionLines = new List<FunctionInfo>();
@@ -233,16 +234,18 @@ namespace SearchableNavbar
                             {
                                 string[] fields = line.Split('\t');
 
-                                if (fields.Length == 4)
+                                if (fields.Length == 5)
                                 {
                                     if(Package.ShowTagSignature)
                                     {
-                                        fields[2] = fields[2].Replace("\r", "").Replace(",", ", ");
+                                        fields[2] = fields[2].Replace(",", ", ");
                                     }
                                     else
                                     {
                                         fields[2] = "";
                                     }
+
+                                    fields[4] = fields[4].Replace("\r", "");
 
                                     FunctionInfo newFunctionInfo = new FunctionInfo()
                                     {
@@ -250,11 +253,12 @@ namespace SearchableNavbar
                                         LineNo = fields[1],
                                         Signature = fields[2].Length == 1 && fields[2][0] == '-' ? "" : fields[2],
                                         Scope = "",
-                                        Moniker = GetMonikerFromLetter(fields[3])
+                                        Moniker = GetMonikerFromLetterAndLanguage(fields[3], fields[4])
                                     };
 
-                                    int index = functionLines.FindIndex(x => x.LineNo == newFunctionInfo.LineNo && (x.Tag.Contains(newFunctionInfo.Tag) || newFunctionInfo.Tag.Contains(x.Tag)));
-                                    if (index >= 0)
+                                    FileType = fields[4];
+
+                                    if(CanTagBeFullyQualified(functionLines, newFunctionInfo, fields[3], fields[4], out int index))
                                     {
                                         if (newFunctionInfo.Tag.Length > functionLines[index].Tag.Length)
                                         {
@@ -278,6 +282,7 @@ namespace SearchableNavbar
                     }
                     catch { }
 
+                    InitializeContextMenu();
                     FilterFunctions();
 
                     if(PreviouslyEmpty && functionLines.Count > 0)
@@ -298,31 +303,50 @@ namespace SearchableNavbar
             }
         }
 
-        private ImageMoniker GetMonikerFromLetter(string letter)
+        private bool CanTagBeFullyQualified(List<FunctionInfo> functionLines, FunctionInfo newFunctionInfo, string kind, string language, out int index)
         {
-            if(letter.Length == 0)
+            index = -1;
+
+            if (language == "C++")
+            {
+                if (kind[0] == 'l') return false;
+                if (kind[0] == 'z') return false;
+                if (kind[0] == 'D') return false;
+                if (kind[0] == 'Z') return false;
+            }
+
+            index = functionLines.FindIndex(x => x.LineNo == newFunctionInfo.LineNo && (x.Tag.Contains(newFunctionInfo.Tag) || newFunctionInfo.Tag.Contains(x.Tag)));
+            return index >= 0;
+        }
+
+        private ImageMoniker GetMonikerFromLetterAndLanguage(string kind, string language)
+        {
+            if(kind.Length == 0)
             {
                 return KnownMonikers.Method;
             }
 
-            if (letter[0] == 'f') return KnownMonikers.Method;
-            if (letter[0] == 'p') return KnownMonikers.MethodShortcut;
-            if (letter[0] == 'c') return KnownMonikers.Class;
-            if (letter[0] == 'n') return KnownMonikers.Namespace;
-            if (letter[0] == 'd') return KnownMonikers.MacroPublic;
-            if (letter[0] == 'g') return KnownMonikers.EnumerationPublic;
-            if (letter[0] == 'e') return KnownMonikers.EnumerationItemPublic;
-            if (letter[0] == 's') return KnownMonikers.Structure;
-            if (letter[0] == 'l') return KnownMonikers.LocalVariable;
-            if (letter[0] == 't') return KnownMonikers.TypeDefinition;
-            if (letter[0] == 'z') return KnownMonikers.Parameter;
-            if (letter[0] == 'D') return KnownMonikers.Parameter;
-            if (letter[0] == 'u') return KnownMonikers.Union;
-            if (letter[0] == 'x') return KnownMonikers.ExternalVariableValue;
-            if (letter[0] == 'U') return KnownMonikers.NamespaceShortcut;
-            if (letter[0] == 'Z') return KnownMonikers.Parameter;
-            if (letter[0] == 'm') return KnownMonikers.Field;
-            if (letter[0] == 'v') return KnownMonikers.Field;
+            if(language == "C++")
+            {
+                if (kind[0] == 'f') return KnownMonikers.Method;
+                if (kind[0] == 'p') return KnownMonikers.MethodShortcut;
+                if (kind[0] == 'c') return KnownMonikers.Class;
+                if (kind[0] == 'n') return KnownMonikers.Namespace;
+                if (kind[0] == 'd') return KnownMonikers.MacroPublic;
+                if (kind[0] == 'g') return KnownMonikers.EnumerationPublic;
+                if (kind[0] == 'e') return KnownMonikers.EnumerationItemPublic;
+                if (kind[0] == 's') return KnownMonikers.Structure;
+                if (kind[0] == 'l') return KnownMonikers.LocalVariable;
+                if (kind[0] == 't') return KnownMonikers.TypeDefinition;
+                if (kind[0] == 'z') return KnownMonikers.Parameter;
+                if (kind[0] == 'D') return KnownMonikers.Parameter;
+                if (kind[0] == 'u') return KnownMonikers.Union;
+                if (kind[0] == 'x') return KnownMonikers.ExternalVariableValue;
+                if (kind[0] == 'U') return KnownMonikers.NamespaceShortcut;
+                if (kind[0] == 'Z') return KnownMonikers.Parameter;
+                if (kind[0] == 'm') return KnownMonikers.Field;
+                if (kind[0] == 'v') return KnownMonikers.Field;
+            }
 
             return KnownMonikers.Method;
         }
@@ -365,7 +389,6 @@ namespace SearchableNavbar
                 await UpdateQueueAsync(CancellationTokenSource.Token);
             });
             
-            InitializeContextMenu();
             RegisterToOptionsChangeEvents();
 
             QueueEvent.Set();
@@ -853,7 +876,7 @@ namespace SearchableNavbar
             ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Anonymous Tags", value => Package.ShowAnonymousTags = value, () => Package.ShowAnonymousTags);
             ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Tag Signature", value => Package.ShowTagSignature = value, () => Package.ShowTagSignature);
 
-            if (TextBuffer.ContentType.IsOfType("C/C++"))
+            if (FileType == "C++")
             {
                 SearchInputContextMenu.Items.Add(new Separator());
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Definitions", value => Package.CppShowMacroDefinitions = value, () => Package.CppShowMacroDefinitions);
@@ -861,7 +884,7 @@ namespace SearchableNavbar
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumerators", value => Package.CppShowEnumerators = value, () => Package.CppShowEnumerators);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumeration Names", value => Package.CppShowEnumerationNames = value, () => Package.CppShowEnumerationNames);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Local Variables", value => Package.CppShowLocalVariables = value, () => Package.CppShowLocalVariables);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Class Struct Union Members", value => Package.CppShowClassStructUnionMembers = value, () => Package.CppShowClassStructUnionMembers);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Class, Struct, and Union Members", value => Package.CppShowClassStructUnionMembers = value, () => Package.CppShowClassStructUnionMembers);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Prototypes", value => Package.CppShowFunctionPrototypes = value, () => Package.CppShowFunctionPrototypes);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Structure Names", value => Package.CppShowStructureNames = value, () => Package.CppShowStructureNames);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Typedefs", value => Package.CppShowTypedefs = value, () => Package.CppShowTypedefs);

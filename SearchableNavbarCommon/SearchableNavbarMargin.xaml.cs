@@ -248,7 +248,7 @@ namespace SearchableNavbar
                                     {
                                         Tag = fields[0],
                                         LineNo = fields[1],
-                                        Signature = fields[3],// fields[2].Length == 1 && fields[2][0] == '-' ? "" : fields[2],
+                                        Signature = fields[2].Length == 1 && fields[2][0] == '-' ? "" : fields[2],
                                         Scope = "",
                                         Moniker = GetMonikerFromLetter(fields[3])
                                     };

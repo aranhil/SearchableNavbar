@@ -53,6 +53,8 @@ namespace SearchableNavbar
         public string Scope { get; set; }
         public string LineNo { get; set; }
         public ImageMoniker Moniker { get; set; }
+        public string Kind { get; set; }
+        public string Language { get; set; }
 
         public BitmapSource imageSource;
         public BitmapSource ImageSource
@@ -255,12 +257,14 @@ namespace SearchableNavbar
                                         LineNo = fields[1],
                                         Signature = fields[2].Length == 1 && fields[2][0] == '-' ? "" : fields[2],
                                         Scope = "",
-                                        Moniker = GetMonikerFromLetterAndLanguage(fields[3], fields[4])
+                                        Moniker = GetMonikerFromLetterAndLanguage(fields[3], fields[4]),
+                                        Kind = fields[3],
+                                        Language = fields[4],
                                     };
 
                                     FileType = fields[4];
 
-                                    if(CanTagBeFullyQualified(functionLines, newFunctionInfo, fields[3], fields[4], out int index))
+                                    if(CanTagBeFullyQualified(functionLines, newFunctionInfo, out int index))
                                     {
                                         if (newFunctionInfo.Tag.Length > functionLines[index].Tag.Length)
                                         {
@@ -305,24 +309,34 @@ namespace SearchableNavbar
             }
         }
 
-        private bool CanTagBeFullyQualified(List<FunctionInfo> functionLines, FunctionInfo newFunctionInfo, string kind, string language, out int index)
+        private bool CanTagBeFullyQualified(List<FunctionInfo> functionLines, FunctionInfo newFunctionInfo, out int index)
         {
             index = -1;
 
-            if (language == "C++" || language == "C")
+            if(!CanTagBeFullyQualified(newFunctionInfo))
             {
-                if (kind[0] == 'l') return false;
-                if (kind[0] == 'z') return false;
-                if (kind[0] == 'D') return false;
-                if (kind[0] == 'Z') return false;
-            }
-            else if(language == "C#")
-            {
-                if (kind[0] == 'e') return false;
+                return false;
             }
 
-            index = functionLines.FindIndex(x => x.LineNo == newFunctionInfo.LineNo && (x.Tag.Contains(newFunctionInfo.Tag) || newFunctionInfo.Tag.Contains(x.Tag)));
+            index = functionLines.FindIndex(x => CanTagBeFullyQualified(x) && x.LineNo == newFunctionInfo.LineNo && (x.Tag.Contains(newFunctionInfo.Tag) || newFunctionInfo.Tag.Contains(x.Tag)));
             return index >= 0;
+        }
+
+        private bool CanTagBeFullyQualified(FunctionInfo functionInfo)
+        {
+            if (functionInfo.Language == "C++" || functionInfo.Language == "C")
+            {
+                if (functionInfo.Kind[0] == 'l') return false;
+                if (functionInfo.Kind[0] == 'z') return false;
+                if (functionInfo.Kind[0] == 'D') return false;
+                if (functionInfo.Kind[0] == 'Z') return false;
+            }
+            else if (functionInfo.Language == "C#")
+            {
+                if (functionInfo.Kind[0] == 'e') return false;
+            }
+
+            return true;
         }
 
         private ImageMoniker GetMonikerFromLetterAndLanguage(string kind, string language)
@@ -924,21 +938,21 @@ namespace SearchableNavbar
             else if(FileType == "C")
             {
                 SearchInputContextMenu.Items.Add(new Separator());
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Definitions", value => Package.CShowMacroDefinitions = value, () => Package.CShowMacroDefinitions);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumerators", value => Package.CShowEnumerators = value, () => Package.CShowEnumerators);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Definitions", value => Package.CShowFunctionDefinitions = value, () => Package.CShowFunctionDefinitions);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumeration Names", value => Package.CShowEnumerationNames = value, () => Package.CShowEnumerationNames);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Local Variables", value => Package.CShowLocalVariables = value, () => Package.CShowLocalVariables);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Struct Members", value => Package.CShowStructMembers = value, () => Package.CShowStructMembers);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Prototypes", value => Package.CShowFunctionPrototypes = value, () => Package.CShowFunctionPrototypes);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Structure Names", value => Package.CShowStructureNames = value, () => Package.CShowStructureNames);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Typedefs", value => Package.CShowTypedefs = value, () => Package.CShowTypedefs);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Union Names", value => Package.CShowUnionNames = value, () => Package.CShowUnionNames);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Variable Definitions", value => Package.CShowVariableDefinitions = value, () => Package.CShowVariableDefinitions);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show External Variable Declarations", value => Package.CShowExternalVariableDeclarations = value, () => Package.CShowExternalVariableDeclarations);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Parameters", value => Package.CShowFunctionParameters = value, () => Package.CShowFunctionParameters);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Goto Labels", value => Package.CShowGotoLabels = value, () => Package.CShowGotoLabels);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Parameters", value => Package.CShowMacroParameters = value, () => Package.CShowMacroParameters);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Definitions", value => Package.CppShowMacroDefinitions = value, () => Package.CppShowMacroDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumerators", value => Package.CppShowEnumerators = value, () => Package.CppShowEnumerators);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Definitions", value => Package.CppShowFunctionDefinitions = value, () => Package.CppShowFunctionDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumeration Names", value => Package.CppShowEnumerationNames = value, () => Package.CppShowEnumerationNames);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Local Variables", value => Package.CppShowLocalVariables = value, () => Package.CppShowLocalVariables);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Struct Members", value => Package.CppShowClassStructUnionMembers = value, () => Package.CppShowClassStructUnionMembers);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Prototypes", value => Package.CppShowFunctionPrototypes = value, () => Package.CppShowFunctionPrototypes);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Structure Names", value => Package.CppShowStructureNames = value, () => Package.CppShowStructureNames);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Typedefs", value => Package.CppShowTypedefs = value, () => Package.CppShowTypedefs);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Union Names", value => Package.CppShowUnionNames = value, () => Package.CppShowUnionNames);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Variable Definitions", value => Package.CppShowVariableDefinitions = value, () => Package.CppShowVariableDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show External And Forward Variable Declarations", value => Package.CppShowExternalAndForwardVariableDeclarations = value, () => Package.CppShowExternalAndForwardVariableDeclarations);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Parameters", value => Package.CppShowFunctionParameters = value, () => Package.CppShowFunctionParameters);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Goto Labels", value => Package.CppShowGotoLabels = value, () => Package.CppShowGotoLabels);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Parameters", value => Package.CppShowMacroParameters = value, () => Package.CppShowMacroParameters);
             }
             else if(FileType == "C#")
             {

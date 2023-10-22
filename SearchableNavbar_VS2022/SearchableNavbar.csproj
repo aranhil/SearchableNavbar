@@ -68,9 +68,6 @@
     <StartArguments>/rootsuffix Exp</StartArguments>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="OptionPages\CPageGrid.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="OptionPages\CppPageGrid.cs">
       <SubType>Component</SubType>
     </Compile>

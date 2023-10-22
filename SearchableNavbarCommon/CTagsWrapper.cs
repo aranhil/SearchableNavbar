@@ -101,19 +101,49 @@ namespace SearchableNavbar
             }
 
             string returnString = "--kinds-C=";
-            if (package.CShowMacroDefinitions) returnString += "d";
-            if (package.CShowEnumerators) returnString += "e";
-            if (package.CShowFunctionDefinitions) returnString += "f";
-            if (package.CShowEnumerationNames) returnString += "g";
-            if (package.CShowLocalVariables) returnString += "l";
-            if (package.CShowFunctionPrototypes) returnString += "p";
-            if (package.CShowStructureNames) returnString += "s";
-            if (package.CShowTypedefs) returnString += "t";
-            if (package.CShowUnionNames) returnString += "u";
-            if (package.CShowVariableDefinitions) returnString += "v";
-            if (package.CShowFunctionParameters) returnString += "z";
-            if (package.CShowGotoLabels) returnString += "L";
-            if (package.CShowMacroParameters) returnString += "D";
+            if (package.CppShowMacroDefinitions) returnString += "d";
+            if (package.CppShowEnumerators) returnString += "e";
+            if (package.CppShowFunctionDefinitions) returnString += "f";
+            if (package.CppShowEnumerationNames) returnString += "g";
+            if (package.CppShowLocalVariables) returnString += "l";
+            if (package.CppShowFunctionPrototypes) returnString += "p";
+            if (package.CppShowStructureNames) returnString += "s";
+            if (package.CppShowTypedefs) returnString += "t";
+            if (package.CppShowUnionNames) returnString += "u";
+            if (package.CppShowVariableDefinitions) returnString += "v";
+            if (package.CppShowFunctionParameters) returnString += "z";
+            if (package.CppShowGotoLabels) returnString += "L";
+            if (package.CppShowMacroParameters) returnString += "D";
+            return returnString;
+        }
+
+        private static string GetCppKindsFromPackage(SearchableNavbarPackage package)
+        {
+            if (package == null)
+            {
+                return "--kinds-C++=fp";
+            }
+
+            string returnString = "--kinds-C++=";
+            if (package.CppShowMacroDefinitions) returnString += "d";
+            if (package.CppShowEnumerators) returnString += "e";
+            if (package.CppShowFunctionDefinitions) returnString += "f";
+            if (package.CppShowEnumerationNames) returnString += "g";
+            if (package.CppShowLocalVariables) returnString += "l";
+            if (package.CppShowClassStructUnionMembers) returnString += "m";
+            if (package.CppShowFunctionPrototypes) returnString += "p";
+            if (package.CppShowStructureNames) returnString += "s";
+            if (package.CppShowTypedefs) returnString += "t";
+            if (package.CppShowUnionNames) returnString += "u";
+            if (package.CppShowVariableDefinitions) returnString += "v";
+            if (package.CppShowExternalAndForwardVariableDeclarations) returnString += "x";
+            if (package.CppShowFunctionParameters) returnString += "z";
+            if (package.CppShowGotoLabels) returnString += "L";
+            if (package.CppShowMacroParameters) returnString += "D";
+            if (package.CppShowClasses) returnString += "c";
+            if (package.CppShowNamespaces) returnString += "n";
+            if (package.CppShowUsingNamespaceStatements) returnString += "U";
+            if (package.CppShowTemplateParameters) returnString += "Z";
             return returnString;
         }
 
@@ -148,36 +178,6 @@ namespace SearchableNavbar
             }
 
             return "--sort=" + (package.SortAlphabetically ? "yes" : "no");
-        }
-
-        private static string GetCppKindsFromPackage(SearchableNavbarPackage package)
-        {
-            if(package == null)
-            {
-                return "--kinds-C++=fp";
-            }
-
-            string returnString = "--kinds-C++=";
-            if (package.CppShowMacroDefinitions) returnString += "d";
-            if (package.CppShowEnumerators) returnString += "e";
-            if (package.CppShowFunctionDefinitions) returnString += "f";
-            if (package.CppShowEnumerationNames) returnString += "g";
-            if (package.CppShowLocalVariables) returnString += "l";
-            if (package.CppShowClassStructUnionMembers) returnString += "m";
-            if (package.CppShowFunctionPrototypes) returnString += "p";
-            if (package.CppShowStructureNames) returnString += "s";
-            if (package.CppShowTypedefs) returnString += "t";
-            if (package.CppShowUnionNames) returnString += "u";
-            if (package.CppShowVariableDefinitions) returnString += "v";
-            if (package.CppShowExternalAndForwardVariableDeclarations) returnString += "x";
-            if (package.CppShowFunctionParameters) returnString += "z";
-            if (package.CppShowGotoLabels) returnString += "L";
-            if (package.CppShowMacroParameters) returnString += "D";
-            if (package.CppShowClasses) returnString += "c";
-            if (package.CppShowNamespaces) returnString += "n";
-            if (package.CppShowUsingNamespaceStatements) returnString += "U";
-            if (package.CppShowTemplateParameters) returnString += "Z";
-            return returnString;
         }
     }
 }

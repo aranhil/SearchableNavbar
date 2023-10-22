@@ -248,7 +248,7 @@ namespace SearchableNavbar
                                     {
                                         Tag = fields[0],
                                         LineNo = fields[1],
-                                        Signature = fields[2].Length == 1 && fields[2][0] == '-' ? "" : fields[2],
+                                        Signature = fields[3],// fields[2].Length == 1 && fields[2][0] == '-' ? "" : fields[2],
                                         Scope = "",
                                         Moniker = GetMonikerFromLetter(fields[3])
                                     };
@@ -321,6 +321,8 @@ namespace SearchableNavbar
             if (letter[0] == 'x') return KnownMonikers.ExternalVariableValue;
             if (letter[0] == 'U') return KnownMonikers.NamespaceShortcut;
             if (letter[0] == 'Z') return KnownMonikers.Parameter;
+            if (letter[0] == 'm') return KnownMonikers.Field;
+            if (letter[0] == 'v') return KnownMonikers.Field;
 
             return KnownMonikers.Method;
         }

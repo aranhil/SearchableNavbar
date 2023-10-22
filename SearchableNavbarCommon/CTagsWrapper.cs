@@ -33,7 +33,7 @@ namespace SearchableNavbar
                 "--kinds-Rust=fP",
                 "--kinds-TypeScript=fm",
                 GetExtraOptionsFromPackage(package),
-                "--_xformat=\"%N\t%n\t%S\t%k\t%l\"",
+                "--_xformat=\"%N\t%n\t%S\t%k\t%l\t%Z\"",
                 GetSortOptionFromPackage(package),
                 GetIgnoredCppMacrosFromPackage(package),
                 "\"" + path + "\""
@@ -149,12 +149,12 @@ namespace SearchableNavbar
 
         private static string GetIgnoredCppMacrosFromPackage(SearchableNavbarPackage package)
         {
-            if(package == null || package.IgnoredCppMacros.Length == 0)
+            if(package == null || package.CppIgnoredMacros.Length == 0)
             {
                 return "";
             }
 
-            return "-I " + package.IgnoredCppMacros;
+            return "-I " + package.CppIgnoredMacros;
         }
 
         private static string GetExtraOptionsFromPackage(SearchableNavbarPackage package)

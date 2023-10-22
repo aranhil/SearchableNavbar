@@ -14,7 +14,6 @@ namespace SearchableNavbar
         private bool showFullyQualifiedTags = true;
         private bool showAnonymousTags = false;
         private bool showTagSignature = true;
-        private string ignoredCppMacros = "UPROPERTY+,UFUNCTION+,USTRUCT+,UMETA+,UPARAM+,UENUM+,UDELEGATE+,RIGVM_METHOD+";
         private string ignoredFileExtensions = "";
 
         [Category("General")]
@@ -51,15 +50,6 @@ namespace SearchableNavbar
         {
             get { return showTagSignature; }
             set { showTagSignature = value; }
-        }
-
-        [Category("General")]
-        [DisplayName("Ignored C/C++ Macros")]
-        [Description("A list of macros that will be ignored in C/C++")]
-        public string IgnoredCppMacros
-        {
-            get { return ignoredCppMacros; }
-            set { ignoredCppMacros = value; }
         }
 
         [Category("General")]

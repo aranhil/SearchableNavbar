@@ -135,22 +135,6 @@ namespace SearchableNavbar
             }
         }
 
-        public string IgnoredCppMacros
-        {
-            get
-            {
-                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
-                return page.IgnoredCppMacros;
-            }
-            set
-            {
-                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
-                page.IgnoredCppMacros = value;
-                page.SaveSettingsToStorage();
-                page.OnSettingsChanged();
-            }
-        }
-
         public string IgnoredFileExtensions
         {
             get
@@ -162,6 +146,22 @@ namespace SearchableNavbar
             {
                 OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
                 page.IgnoredFileExtensions = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public string CppIgnoredMacros
+        {
+            get
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                return page.CppIgnoredMacros;
+            }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppIgnoredMacros = value;
                 page.SaveSettingsToStorage();
                 page.OnSettingsChanged();
             }

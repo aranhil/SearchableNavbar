@@ -10,6 +10,7 @@ namespace SearchableNavbar
 {
     public class CppPageGrid : DialogPage
     {
+        private string cppIgnoredMacros = "UPROPERTY+,UFUNCTION+,USTRUCT+,UMETA+,UPARAM+,UENUM+,UDELEGATE+,RIGVM_METHOD+";
         private bool cppShowMacroDefinitions = false;
         private bool cppShowFunctionDefinitions = true;
         private bool cppShowEnumerators = false;
@@ -29,6 +30,15 @@ namespace SearchableNavbar
         private bool cppShowNamespaces = false;
         private bool cppShowUsingNamespaceStatements = false;
         private bool cppShowTemplateParameters = false;
+
+        [Category("General")]
+        [DisplayName("Ignored Macros")]
+        [Description("A list of macros that will be ignored")]
+        public string CppIgnoredMacros
+        {
+            get { return cppIgnoredMacros; }
+            set { cppIgnoredMacros = value; }
+        }
 
         [Category("General")]
         [DisplayName("Show Macro Definitions")]

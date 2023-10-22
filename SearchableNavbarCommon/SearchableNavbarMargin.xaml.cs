@@ -51,6 +51,7 @@ namespace SearchableNavbar
         public string Tag { get; set; }
         public string Signature { get; set; }
         public string Scope { get; set; }
+        public string HiddenScope { get; set; }
         public string LineNo { get; set; }
         public ImageMoniker Moniker { get; set; }
         public string Kind { get; set; }
@@ -237,7 +238,7 @@ namespace SearchableNavbar
                             {
                                 string[] fields = line.Split('\t');
 
-                                if (fields.Length == 5)
+                                if (fields.Length == 6)
                                 {
                                     if(Package.ShowTagSignature)
                                     {
@@ -248,7 +249,7 @@ namespace SearchableNavbar
                                         fields[2] = "";
                                     }
 
-                                    fields[4] = fields[4].Replace("\r", "");
+                                    fields[5] = fields[5].Replace("\r", "");
                                     //fields[2] += " " + fields[3];
 
                                     FunctionInfo newFunctionInfo = new FunctionInfo()
@@ -257,6 +258,7 @@ namespace SearchableNavbar
                                         LineNo = fields[1],
                                         Signature = fields[2].Length == 1 && fields[2][0] == '-' ? "" : fields[2],
                                         Scope = "",
+                                        HiddenScope = fields[5],
                                         Moniker = GetMonikerFromLetterAndLanguage(fields[3], fields[4]),
                                         Kind = fields[3],
                                         Language = fields[4],
@@ -264,7 +266,7 @@ namespace SearchableNavbar
 
                                     FileType = fields[4];
 
-                                    if(CanTagBeFullyQualified(functionLines, newFunctionInfo, out int index))
+                                    if (Package.ShowFullyQualifiedTags && CanTagBeFullyQualified(functionLines, newFunctionInfo, out int index))
                                     {
                                         if (newFunctionInfo.Tag.Length > functionLines[index].Tag.Length)
                                         {
@@ -281,6 +283,17 @@ namespace SearchableNavbar
                                     else
                                     {
                                         functionLines.Add(newFunctionInfo);
+                                    }
+                                }
+                            }
+
+                            if(Package.ShowFullyQualifiedTags)
+                            {
+                                foreach (FunctionInfo functionInfo in functionLines)
+                                {
+                                    if (functionInfo.HiddenScope.Length > functionInfo.Scope.Length)
+                                    {
+                                        functionInfo.Scope = GetScopeForLanguage(functionInfo.HiddenScope, functionInfo.Language);
                                     }
                                 }
                             }
@@ -307,6 +320,20 @@ namespace SearchableNavbar
             catch(Exception)
             {
             }
+        }
+
+        private string GetScopeForLanguage(string scope, string language)
+        {
+            if (language == "C++" || language == "C")
+            {
+                return scope + "::";
+            }
+            else if (language == "C#")
+            {
+                return scope + ".";
+            }
+
+            return scope + " ";
         }
 
         private bool CanTagBeFullyQualified(List<FunctionInfo> functionLines, FunctionInfo newFunctionInfo, out int index)

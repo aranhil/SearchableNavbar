@@ -115,4 +115,98 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <Style x:Key="SomeContextMenu" TargetType="{x:Type ContextMenu}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Grid.IsSharedSizeScope" Value="true" />
+        <Setter Property="HasDropShadow" Value="True" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:EnvironmentColors.CommandBarMenuBackgroundGradientBeginBrushKey}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:EnvironmentColors.CommandBarTextActiveBrushKey}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsshell:EnvironmentColors.CommandBarMenuBorderBrushKey}}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ContextMenu}">
+                    <Border Background="{TemplateBinding Background}" BorderThickness="10" Margin="-10,-10,0,0">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="4" ShadowDepth="2" Opacity="0.2" />
+                        </Border.Effect>
+                        <Border x:Name="Border" Background="{TemplateBinding Background}" BorderThickness="1" Padding="2" BorderBrush="{TemplateBinding BorderBrush}">
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                        </Border>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="{x:Type ContextMenu}" BasedOn="{StaticResource SomeContextMenu}">
+    </Style>
+    <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
+        <Setter Property="Height" Value="1" />
+        <Setter Property="Margin" Value="0,2,0,2" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:EnvironmentColors.CommandBarMenuSeparatorBrushKey}}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Separator}">
+                    <Border BorderThickness="1">
+                        <Border.BorderBrush>
+                            <VisualBrush>
+                                <VisualBrush.Visual>
+                                    <Rectangle Stroke="{TemplateBinding Background}" StrokeThickness="1" Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualHeight}"/>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Border.BorderBrush>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <ControlTemplate x:Key="{x:Static MenuItem.SubmenuItemTemplateKey}" TargetType="{x:Type MenuItem}">
+        <Border x:Name="Border" BorderThickness="1" Height="22">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Shortcut" />
+                    <ColumnDefinition Width="13" />
+                </Grid.ColumnDefinitions>
+                <ContentPresenter x:Name="Icon" Margin="6,0,6,0" VerticalAlignment="Center" ContentSource="Icon" />
+                <Border x:Name="Check" Width="14" Height="14" Visibility="Collapsed" Margin="6,0,6,0" BorderThickness="0" Background="{x:Null}">
+                    <Path x:Name="CheckMark" Width="9" Height="8" Visibility="Hidden" SnapsToDevicePixels="False" StrokeThickness="0" Stroke="{x:Null}" Data="M6.22,11.02C6.22,11.02 2.5,7.24 2.5,7.24 2.5,7.24 4.05,5.71 4.05,5.71 4.05,5.71 5.97,7.65 5.97,7.65 5.97,7.65 10.52,1.38 10.52,1.38 10.52,1.38 13.19,1.38 13.19,1.38 13.19,1.38 6.22,11.02 6.22,11.02 6.22,11.02 6.22,11.02 6.22,11.02z" Stretch="Fill" Fill="{DynamicResource {x:Static vsshell:EnvironmentColors.CommandBarCheckBoxBrushKey}}"/>
+                </Border>
+                <ContentPresenter x:Name="HeaderHost" Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center" Margin="0,0,0,0" />
+                <TextBlock x:Name="InputGestureText" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Foreground="Gray" DockPanel.Dock="Right" VerticalAlignment="Center" Padding="20,0,0,0" />
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="ButtonBase.Command" Value="{x:Null}" />
+            <Trigger Property="Icon" Value="{x:Null}">
+                <Setter TargetName="Icon" Property="Visibility"
+              Value="Hidden" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="true">
+                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsCheckable" Value="true">
+                <Setter TargetName="Check" Property="Visibility" Value="Visible" />
+                <Setter TargetName="Icon" Property="Visibility" Value="Hidden" />
+            </Trigger>
+            <Trigger Property="IsHighlighted" Value="true">
+                <Setter Property="Background" TargetName="Border" Value="{DynamicResource {x:Static vsshell:EnvironmentColors.CommandBarMenuItemMouseOverBrushKey}}"/>
+                <Setter Property="BorderBrush" TargetName="Border" Value="{DynamicResource {x:Static vsshell:EnvironmentColors.CommandBarMenuItemMouseOverBorderBrushKey}}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Foreground" Value="{DynamicResource Button.IsDisabled.Foreground}"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <Style x:Key="SomeMenuItem" TargetType="{x:Type MenuItem}">
+        <Setter Property="OverridesDefaultStyle"
+          Value="True" />
+        <Style.Triggers>
+            <Trigger Property="Role" Value="SubmenuItem">
+                <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.SubmenuItemTemplateKey}}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource SomeMenuItem}" />
 </ResourceDictionary>

@@ -847,7 +847,7 @@ namespace SearchableNavbar
             {
                 ContextMenuToggle contextMenuToggle = new ContextMenuToggle(setter, getter);
 
-                MenuItem menuItem = new MenuItem { Header = header };
+                MenuItem menuItem = new MenuItem { Header = header, IsCheckable = true };
                 menuItem.Click += contextMenuToggle.ContextMenuItem_Click;
                 menuItem.IsChecked = getter();
                 menuItem.Tag = contextMenuToggle;

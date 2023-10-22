@@ -23,7 +23,7 @@ namespace SearchableNavbar
                 "--fields=S",
                 GetCppKindsFromPackage(package),
                 GetCKindsFromPackage(package),
-                "--kinds-C#=m",
+                GetCSharpKindsFromPackage(package),
                 "--kinds-Java=m",
                 "--kinds-JavaScript=mf",
                 "--kinds-Pascal=fp",
@@ -67,6 +67,30 @@ namespace SearchableNavbar
             }
 
             return output;
+        }
+
+        private static string GetCSharpKindsFromPackage(SearchableNavbarPackage package)
+        {
+            if (package == null)
+            {
+                return "--kinds-C#=m";
+            }
+
+            string returnString = "--kinds-C#=";
+            if (package.CSharpShowClasses) returnString += "c";
+            if (package.CSharpShowMacroDefinitions) returnString += "d";
+            if (package.CSharpShowEnumerators) returnString += "e";
+            if (package.CSharpShowEvents) returnString += "E";
+            if (package.CSharpShowFields) returnString += "f";
+            if (package.CSharpShowEnumerationNames) returnString += "g";
+            if (package.CSharpShowInterfaces) returnString += "i";
+            if (package.CSharpShowLocalVariables) returnString += "l";
+            if (package.CSharpShowMethods) returnString += "m";
+            if (package.CSharpShowNamespaces) returnString += "n";
+            if (package.CSharpShowProperties) returnString += "p";
+            if (package.CSharpShowStructureNames) returnString += "s";
+            if (package.CSharpShowTypedefs) returnString += "t";
+            return returnString;
         }
 
         private static string GetCKindsFromPackage(SearchableNavbarPackage package)

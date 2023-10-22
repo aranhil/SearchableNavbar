@@ -19,6 +19,7 @@ namespace SearchableNavbar
     [ProvideOptionPage(typeof(OptionPageGrid), "Searchable Navbar", "General", 0, 0, true)]
     [ProvideOptionPage(typeof(CppPageGrid), "Searchable Navbar", "C++", 0, 0, true)]
     [ProvideOptionPage(typeof(CPageGrid), "Searchable Navbar", "C", 0, 0, true)]
+    [ProvideOptionPage(typeof(CSharpPageGrid), "Searchable Navbar", "C#", 0, 0, true)]
     [ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class SearchableNavbarPackage : AsyncPackage
     {
@@ -52,6 +53,9 @@ namespace SearchableNavbar
 
             CPageGrid cPage = (CPageGrid)GetDialogPage(typeof(CPageGrid));
             cPage.SettingsChanged += optionsChanged;
+
+            CSharpPageGrid cSharpPage = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+            cSharpPage.SettingsChanged += optionsChanged;
         }
 
         public void UnregisterFromOptionsChangeEvents(EventHandler optionsChanged)
@@ -64,6 +68,9 @@ namespace SearchableNavbar
 
             CPageGrid cPage = (CPageGrid)GetDialogPage(typeof(CPageGrid));
             cPage.SettingsChanged -= optionsChanged;
+
+            CSharpPageGrid cSharpPage = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+            cSharpPage.SettingsChanged -= optionsChanged;
         }
 
         public void ShowSettings()
@@ -706,6 +713,214 @@ namespace SearchableNavbar
             {
                 CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
                 page.CShowMacroParameters = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CSharpShowClasses
+        {
+            get
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                return page.CSharpShowClasses;
+            }
+            set
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                page.CSharpShowClasses = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CSharpShowMacroDefinitions
+        {
+            get
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                return page.CSharpShowMacroDefinitions;
+            }
+            set
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                page.CSharpShowMacroDefinitions = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CSharpShowEnumerators
+        {
+            get
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                return page.CSharpShowEnumerators;
+            }
+            set
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                page.CSharpShowEnumerators = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CSharpShowEvents
+        {
+            get
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                return page.CSharpShowEvents;
+            }
+            set
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                page.CSharpShowEvents = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CSharpShowFields
+        {
+            get
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                return page.CSharpShowFields;
+            }
+            set
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                page.CSharpShowFields = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CSharpShowEnumerationNames
+        {
+            get
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                return page.CSharpShowEnumerationNames;
+            }
+            set
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                page.CSharpShowEnumerationNames = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CSharpShowInterfaces
+        {
+            get
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                return page.CSharpShowInterfaces;
+            }
+            set
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                page.CSharpShowInterfaces = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CSharpShowLocalVariables
+        {
+            get
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                return page.CSharpShowLocalVariables;
+            }
+            set
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                page.CSharpShowLocalVariables = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CSharpShowMethods
+        {
+            get
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                return page.CSharpShowMethods;
+            }
+            set
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                page.CSharpShowMethods = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CSharpShowNamespaces
+        {
+            get
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                return page.CSharpShowNamespaces;
+            }
+            set
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                page.CSharpShowNamespaces = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CSharpShowProperties
+        {
+            get
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                return page.CSharpShowProperties;
+            }
+            set
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                page.CSharpShowProperties = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CSharpShowStructureNames
+        {
+            get
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                return page.CSharpShowStructureNames;
+            }
+            set
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                page.CSharpShowStructureNames = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CSharpShowTypedefs
+        {
+            get
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                return page.CSharpShowTypedefs;
+            }
+            set
+            {
+                CSharpPageGrid page = (CSharpPageGrid)GetDialogPage(typeof(CSharpPageGrid));
+                page.CSharpShowTypedefs = value;
                 page.SaveSettingsToStorage();
                 page.OnSettingsChanged();
             }

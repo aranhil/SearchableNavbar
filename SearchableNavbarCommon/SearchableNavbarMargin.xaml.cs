@@ -247,6 +247,7 @@ namespace SearchableNavbar
                                     }
 
                                     fields[4] = fields[4].Replace("\r", "");
+                                    //fields[2] += " " + fields[3];
 
                                     FunctionInfo newFunctionInfo = new FunctionInfo()
                                     {
@@ -315,6 +316,10 @@ namespace SearchableNavbar
                 if (kind[0] == 'D') return false;
                 if (kind[0] == 'Z') return false;
             }
+            else if(language == "C#")
+            {
+                if (kind[0] == 'e') return false;
+            }
 
             index = functionLines.FindIndex(x => x.LineNo == newFunctionInfo.LineNo && (x.Tag.Contains(newFunctionInfo.Tag) || newFunctionInfo.Tag.Contains(x.Tag)));
             return index >= 0;
@@ -347,6 +352,22 @@ namespace SearchableNavbar
                 if (kind[0] == 'Z') return KnownMonikers.Parameter;
                 if (kind[0] == 'm') return KnownMonikers.Field;
                 if (kind[0] == 'v') return KnownMonikers.Field;
+            }
+            else if(language == "C#")
+            {
+                if (kind[0] == 'c') return KnownMonikers.Class;
+                if (kind[0] == 'd') return KnownMonikers.MacroPublic;
+                if (kind[0] == 'e') return KnownMonikers.EnumerationItemPublic;
+                if (kind[0] == 'E') return KnownMonikers.Event;
+                if (kind[0] == 'f') return KnownMonikers.Field;
+                if (kind[0] == 'g') return KnownMonikers.EnumerationPublic;
+                if (kind[0] == 'i') return KnownMonikers.Interface;
+                if (kind[0] == 'l') return KnownMonikers.LocalVariable;
+                if (kind[0] == 'm') return KnownMonikers.Method;
+                if (kind[0] == 'n') return KnownMonikers.Namespace;
+                if (kind[0] == 'p') return KnownMonikers.Property;
+                if (kind[0] == 's') return KnownMonikers.Structure;
+                if (kind[0] == 't') return KnownMonikers.TypeDefinition;
             }
 
             return KnownMonikers.Method;
@@ -918,6 +939,23 @@ namespace SearchableNavbar
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Parameters", value => Package.CShowFunctionParameters = value, () => Package.CShowFunctionParameters);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Goto Labels", value => Package.CShowGotoLabels = value, () => Package.CShowGotoLabels);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Parameters", value => Package.CShowMacroParameters = value, () => Package.CShowMacroParameters);
+            }
+            else if(FileType == "C#")
+            {
+                SearchInputContextMenu.Items.Add(new Separator());
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Classes", value => Package.CSharpShowClasses = value, () => Package.CSharpShowClasses);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Definitions", value => Package.CSharpShowMacroDefinitions = value, () => Package.CSharpShowMacroDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumerators", value => Package.CSharpShowEnumerators = value, () => Package.CSharpShowEnumerators);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Events", value => Package.CSharpShowEvents = value, () => Package.CSharpShowEvents);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Fields", value => Package.CSharpShowFields = value, () => Package.CSharpShowFields);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumeration Names", value => Package.CSharpShowEnumerationNames = value, () => Package.CSharpShowEnumerationNames);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Interfaces", value => Package.CSharpShowInterfaces = value, () => Package.CSharpShowInterfaces);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Local Variables", value => Package.CSharpShowLocalVariables = value, () => Package.CSharpShowLocalVariables);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Methods", value => Package.CSharpShowMethods = value, () => Package.CSharpShowMethods);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Namespaces", value => Package.CSharpShowNamespaces = value, () => Package.CSharpShowNamespaces);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Properties", value => Package.CSharpShowProperties = value, () => Package.CSharpShowProperties);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Structure Names", value => Package.CSharpShowStructureNames = value, () => Package.CSharpShowStructureNames);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Typedefs", value => Package.CSharpShowTypedefs = value, () => Package.CSharpShowTypedefs);
             }
 
             SearchInputContextMenu.Items.Add(new Separator());

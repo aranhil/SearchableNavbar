@@ -333,7 +333,7 @@ namespace SearchableNavbar
                 return scope + ".";
             }
 
-            return scope + " ";
+            return "";
         }
 
         private bool CanTagBeFullyQualified(List<FunctionInfo> functionLines, FunctionInfo newFunctionInfo, out int index)

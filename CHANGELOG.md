@@ -26,3 +26,8 @@
 ### Version 1.16 (10/10/2023)
 
 - Added support for ignorable file extensions
+
+### Version 1.17 (22/10/2023)
+
+- Added options pages and a contextual menu
+- Added more tag types that can be displayed for C/C++ and C#

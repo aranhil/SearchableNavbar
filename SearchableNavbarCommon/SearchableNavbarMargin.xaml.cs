@@ -75,8 +75,8 @@ namespace SearchableNavbar
         public FrameworkElement DocumentElement = null;
 
         private bool isDisposed;
-        private IWpfTextView textView;
-        private ITextBuffer textBuffer;
+        private IWpfTextView TextView;
+        private ITextBuffer TextBuffer;
         private IVsImageService2 ImageService;
         private ITextDocumentFactoryService TextDocumentFactoryService;
         private SearchableNavbarPackage Package;
@@ -97,12 +97,12 @@ namespace SearchableNavbar
             InitializeComponent();
 
             this.DTE = DTE;
-            this.textView = textView;
+            this.TextView = textView;
             this.ImageService = ImageService;
             this.TextDocumentFactoryService = TextDocumentFactoryService;
 
             Caret = textView.Caret;
-            textBuffer = textView.TextBuffer;
+            TextBuffer = textView.TextBuffer;
             DocumentElement = textView.VisualElement;
 
             if (TextDocumentFactoryService.TryGetTextDocument(textView.TextBuffer, out ITextDocument document))
@@ -197,20 +197,12 @@ namespace SearchableNavbar
 
             try
             {
-                if(Package == null)
+                if (Package == null)
                 {
-                    var vsShell = (IVsShell)ServiceProvider.GlobalProvider.GetService(typeof(IVsShell));
-                    if(vsShell != null)
+                    LoadPackage();
+                    if (Package == null)
                     {
-                        IVsPackage package = null;
-                        if (vsShell.IsPackageLoaded(new Guid(SearchableNavbarPackage.PackageGuidString), out package) == S_OK)
-                        {
-                            Package = (SearchableNavbarPackage)package;
-                        }
-                        else if(ErrorHandler.Succeeded(vsShell.LoadPackage(new Guid(SearchableNavbarPackage.PackageGuidString), out package)))
-                        {
-                            Package = package as SearchableNavbarPackage;
-                        }
+                        return;
                     }
                 }
 
@@ -242,7 +234,14 @@ namespace SearchableNavbar
 
                                 if (fields.Length == 3)
                                 {
-                                    fields[2] = fields[2].Replace("\r", "").Replace(",", ", ");
+                                    if(Package.ShowTagSignature)
+                                    {
+                                        fields[2] = fields[2].Replace("\r", "").Replace(",", ", ");
+                                    }
+                                    else
+                                    {
+                                        fields[2] = "";
+                                    }
 
                                     FunctionInfo newFunctionInfo = new FunctionInfo()
                                     {
@@ -285,7 +284,7 @@ namespace SearchableNavbar
 
                         try
                         {
-                            UpdateOverlayFromCurrentCaretPosition(textView.Caret.Position.BufferPosition);
+                            UpdateOverlayFromCurrentCaretPosition(TextView.Caret.Position.BufferPosition);
                             SelectSearchResult(currentInfo);
                         }
                         catch { }
@@ -297,14 +296,33 @@ namespace SearchableNavbar
             }
         }
 
+        private void LoadPackage()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var vsShell = (IVsShell)ServiceProvider.GlobalProvider.GetService(typeof(IVsShell));
+            if (vsShell != null)
+            {
+                IVsPackage package = null;
+                if (vsShell.IsPackageLoaded(new Guid(SearchableNavbarPackage.PackageGuidString), out package) == S_OK)
+                {
+                    Package = (SearchableNavbarPackage)package;
+                }
+                else if (ErrorHandler.Succeeded(vsShell.LoadPackage(new Guid(SearchableNavbarPackage.PackageGuidString), out package)))
+                {
+                    Package = package as SearchableNavbarPackage;
+                }
+            }
+        }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             Caret.PositionChanged += Caret_PositionChanged;
-            textBuffer.Changed += TextBuffer_Changed;
+            TextBuffer.Changed += TextBuffer_Changed;
 
-            if (TextDocumentFactoryService.TryGetTextDocument(textView.TextBuffer, out ITextDocument document))
+            if (TextDocumentFactoryService.TryGetTextDocument(TextView.TextBuffer, out ITextDocument document))
             {
                 document.FileActionOccurred += Document_FileActionOccurred;
             }
@@ -315,8 +333,27 @@ namespace SearchableNavbar
                 await TaskScheduler.Default;
                 await UpdateQueueAsync(CancellationTokenSource.Token);
             });
+            
+            InitializeContextMenu();
+            RegisterToOptionsChangeEvents();
 
             QueueEvent.Set();
+        }
+
+        private void RegisterToOptionsChangeEvents()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (Package == null)
+            {
+                LoadPackage();
+                if (Package == null)
+                {
+                    return;
+                }
+            }
+
+            Package.RegisterToOptionsChangeEvents(OptionsChanged);
         }
 
         private void Document_FileActionOccurred(object sender, TextDocumentFileActionEventArgs e)
@@ -331,18 +368,35 @@ namespace SearchableNavbar
             }
         }
 
+        private void OptionsChanged(object sender, EventArgs e)
+        {
+            QueueEvent.Set();
+        }
+
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
             QueueEvent.Set();
             CancellationTokenSource.Cancel();
 
             Caret.PositionChanged -= Caret_PositionChanged;
-            textBuffer.Changed -= TextBuffer_Changed;
+            TextBuffer.Changed -= TextBuffer_Changed;
 
-            if (TextDocumentFactoryService.TryGetTextDocument(textView.TextBuffer, out ITextDocument document))
+            if (TextDocumentFactoryService.TryGetTextDocument(TextView.TextBuffer, out ITextDocument document))
             {
                 document.FileActionOccurred -= Document_FileActionOccurred;
             }
+
+            UnregisterFromOptionsChangeEvents();
+        }
+
+        private void UnregisterFromOptionsChangeEvents()
+        {
+            if (Package == null)
+            {
+                return;
+            }
+
+            Package.UnregisterFromOptionsChangeEvents(OptionsChanged);
         }
 
         private void FilterFunctions()
@@ -400,7 +454,7 @@ namespace SearchableNavbar
 
             try
             {
-                UpdateOverlayFromCurrentCaretPosition(e?.NewPosition.Point?.GetPoint(textView.TextBuffer, e.NewPosition.Affinity));
+                UpdateOverlayFromCurrentCaretPosition(e?.NewPosition.Point?.GetPoint(TextView.TextBuffer, e.NewPosition.Affinity));
             }
             catch { }
         }
@@ -557,7 +611,7 @@ namespace SearchableNavbar
                 {
                     try
                     {
-                        textView.VisualElement.Focus();
+                        TextView.VisualElement.Focus();
                         (DTE?.ActiveDocument?.Selection as TextSelection)?.MoveToLineAndOffset(int.Parse(oldSelectedSearchResult.LineNo), 1);
 
                         e.Handled = true;
@@ -571,7 +625,7 @@ namespace SearchableNavbar
             {
                 ClosePopup();
 
-                textView.VisualElement.Focus();
+                TextView.VisualElement.Focus();
             }
         }
 
@@ -635,18 +689,9 @@ namespace SearchableNavbar
             }
         }
 
-        private void GridContainer_PreviewKeyUp(object sender, KeyEventArgs e)
-        {
-
-        }
-
         private void FunctionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             selectedSearchResult = FunctionsListBox.SelectedIndex;
-        }
-
-        public void FunctionClicked(ListBoxItem listBoxItem)
-        {
         }
 
         private bool IgnoreNextUnfocus = false;
@@ -657,7 +702,19 @@ namespace SearchableNavbar
 
         private void SearchInput_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            IgnoreNextUnfocus = false;
+            if(e.ChangedButton == MouseButton.Right && !ItemsPopup.IsOpen)
+            {
+                e.Handled = true;
+            }
+            else
+            {
+                IgnoreNextUnfocus = false;
+            }
+        }
+
+        private void SearchInput_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            TextView.VisualElement.Focus();
         }
 
         private void DockPanel_MouseDown(object sender, MouseButtonEventArgs e)
@@ -669,7 +726,7 @@ namespace SearchableNavbar
             {
                 try
                 {
-                    textView.VisualElement.Focus();
+                    TextView.VisualElement.Focus();
                     (DTE?.ActiveDocument?.Selection as TextSelection)?.MoveToLineAndOffset(int.Parse(functionInfo.LineNo), 1);
                 }
                 catch { }
@@ -704,6 +761,90 @@ namespace SearchableNavbar
 
             string currentExtension = System.IO.Path.GetExtension(path).ToLower();
             return package.IgnoredFileExtensions.Split(',').Any((string extension) => { return currentExtension == extension; });
+        }
+
+        public class ContextMenuToggle
+        {
+            private Action<bool> Setter;
+            private Func<bool> Getter;
+
+            public ContextMenuToggle(Action<bool> setter, Func<bool> getter)
+            {
+                Setter = setter;
+                Getter = getter;
+            }
+
+            private void ContextMenuItem_Click(object sender, RoutedEventArgs e)
+            {
+                MenuItem menuItem = sender as MenuItem;
+                if (menuItem != null)
+                {
+                    ContextMenuToggle contextMenuToggle = menuItem.Tag as ContextMenuToggle;
+                    if(contextMenuToggle != null)
+                    {
+                        bool oldValue = contextMenuToggle.Getter();
+                        contextMenuToggle.Setter(!oldValue);
+                        menuItem.IsChecked = !oldValue;
+                    }
+                }
+            }
+
+            public static void AddMenuToggleOption(ContextMenu contextMenu, string header, Action<bool> setter, Func<bool> getter)
+            {
+                ContextMenuToggle contextMenuToggle = new ContextMenuToggle(setter, getter);
+
+                MenuItem menuItem = new MenuItem { Header = header };
+                menuItem.Click += contextMenuToggle.ContextMenuItem_Click;
+                menuItem.IsChecked = getter();
+                menuItem.Tag = contextMenuToggle;
+
+                contextMenu.Items.Add(menuItem);
+            }
+        }
+
+        private void InitializeContextMenu()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            SearchInputContextMenu.Items.Clear();
+
+            if (Package == null)
+            {
+                LoadPackage();
+                if(Package == null)
+                {
+                    return;
+                }
+            }
+
+            ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Sort Alphabetically", value => Package.SortAlphabetically = value, () => Package.SortAlphabetically);
+            ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Fully Qualified Tags", value => Package.ShowFullyQualifiedTags = value, () => Package.ShowFullyQualifiedTags);
+            ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Anonymous Tags", value => Package.ShowAnonymousTags = value, () => Package.ShowAnonymousTags);
+            ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Tag Signature", value => Package.ShowTagSignature = value, () => Package.ShowTagSignature);
+
+            if (TextBuffer.ContentType.IsOfType("C/C++"))
+            {
+                SearchInputContextMenu.Items.Add(new Separator());
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Definitions", value => Package.CppShowMacroDefinitions = value, () => Package.CppShowMacroDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Definitions", value => Package.CppShowFunctionDefinitions = value, () => Package.CppShowFunctionDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumerators", value => Package.CppShowEnumerators = value, () => Package.CppShowEnumerators);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumeration Names", value => Package.CppShowEnumerationNames = value, () => Package.CppShowEnumerationNames);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Local Variables", value => Package.CppShowLocalVariables = value, () => Package.CppShowLocalVariables);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Class Struct Union Members", value => Package.CppShowClassStructUnionMembers = value, () => Package.CppShowClassStructUnionMembers);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Prototypes", value => Package.CppShowFunctionPrototypes = value, () => Package.CppShowFunctionPrototypes);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Structure Names", value => Package.CppShowStructureNames = value, () => Package.CppShowStructureNames);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Typedefs", value => Package.CppShowTypedefs = value, () => Package.CppShowTypedefs);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Union Names", value => Package.CppShowUnionNames = value, () => Package.CppShowUnionNames);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Variable Definitions", value => Package.CppShowVariableDefinitions = value, () => Package.CppShowVariableDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show External And Forward Variable Declarations", value => Package.CppShowExternalAndForwardVariableDeclarations = value, () => Package.CppShowExternalAndForwardVariableDeclarations);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Parameters", value => Package.CppShowFunctionParameters = value, () => Package.CppShowFunctionParameters);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Goto Labels", value => Package.CppShowGotoLabels = value, () => Package.CppShowGotoLabels);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Parameters", value => Package.CppShowMacroParameters = value, () => Package.CppShowMacroParameters);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Classes", value => Package.CppShowClasses = value, () => Package.CppShowClasses);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Namespaces", value => Package.CppShowNamespaces = value, () => Package.CppShowNamespaces);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Using Namespace Statements", value => Package.CppShowUsingNamespaceStatements = value, () => Package.CppShowUsingNamespaceStatements);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Template Parameters", value => Package.CppShowTemplateParameters = value, () => Package.CppShowTemplateParameters);
+            }
         }
     }
 }

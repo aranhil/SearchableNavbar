@@ -13,6 +13,7 @@ namespace SearchableNavbar
         private bool sortAlphabetically = false;
         private bool showFullyQualifiedTags = true;
         private bool showAnonymousTags = false;
+        private bool showTagSignature = true;
         private string ignoredCppMacros = "UPROPERTY+,UFUNCTION+,USTRUCT+,UMETA+,UPARAM+,UENUM+,UDELEGATE+,RIGVM_METHOD+";
         private string ignoredFileExtensions = "";
 
@@ -44,6 +45,15 @@ namespace SearchableNavbar
         }
 
         [Category("General")]
+        [DisplayName("Show Tag Signature")]
+        [Description("Enable or disable the display of the tag signature.")]
+        public bool ShowTagSignature
+        {
+            get { return showTagSignature; }
+            set { showTagSignature = value; }
+        }
+
+        [Category("General")]
         [DisplayName("Ignored C/C++ Macros")]
         [Description("A list of macros that will be ignored in C/C++")]
         public string IgnoredCppMacros
@@ -59,6 +69,23 @@ namespace SearchableNavbar
         {
             get { return ignoredFileExtensions; }
             set { ignoredFileExtensions = value; }
+        }
+
+        public event EventHandler SettingsChanged;
+
+        public virtual void OnSettingsChanged()
+        {
+            SettingsChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected override void OnApply(PageApplyEventArgs e)
+        {
+            base.OnApply(e);
+
+            if (e.ApplyBehavior == ApplyKind.Apply)
+            {
+                OnSettingsChanged();
+            }
         }
     }
 }

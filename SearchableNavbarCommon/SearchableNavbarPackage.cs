@@ -40,12 +40,37 @@ namespace SearchableNavbar
             await FocusCommand.InitializeAsync(this);
         }
 
+        public void RegisterToOptionsChangeEvents(EventHandler optionsChanged)
+        {
+            OptionPageGrid optionPage = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+            optionPage.SettingsChanged += optionsChanged;
+
+            CppPageGrid cppPage = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+            cppPage.SettingsChanged += optionsChanged;
+        }
+
+        public void UnregisterFromOptionsChangeEvents(EventHandler optionsChanged)
+        {
+            OptionPageGrid optionPage = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+            optionPage.SettingsChanged -= optionsChanged;
+
+            CppPageGrid cppPage = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+            cppPage.SettingsChanged -= optionsChanged;
+        }
+
         public bool SortAlphabetically
         {
             get
             {
                 OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
                 return page.SortAlphabetically;
+            }
+            set
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                page.SortAlphabetically = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
             }
         }
 
@@ -56,6 +81,13 @@ namespace SearchableNavbar
                 OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
                 return page.ShowFullyQualifiedTags;
             }
+            set
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                page.ShowFullyQualifiedTags = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
         }
 
         public bool ShowAnonymousTags
@@ -64,6 +96,29 @@ namespace SearchableNavbar
             {
                 OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
                 return page.ShowAnonymousTags;
+            }
+            set
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                page.ShowAnonymousTags = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool ShowTagSignature
+        {
+            get
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                return page.ShowTagSignature;
+            }
+            set
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                page.ShowTagSignature = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
             }
         }
 
@@ -74,6 +129,13 @@ namespace SearchableNavbar
                 OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
                 return page.IgnoredCppMacros;
             }
+            set
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                page.IgnoredCppMacros = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
         }
 
         public string IgnoredFileExtensions
@@ -82,6 +144,13 @@ namespace SearchableNavbar
             {
                 OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
                 return page.IgnoredFileExtensions;
+            }
+            set
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                page.IgnoredFileExtensions = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
             }
         }
 
@@ -92,6 +161,13 @@ namespace SearchableNavbar
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowMacroDefinitions;
             }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowMacroDefinitions = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
         }
 
         public bool CppShowFunctionDefinitions
@@ -100,6 +176,13 @@ namespace SearchableNavbar
             {
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowFunctionDefinitions;
+            }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowFunctionDefinitions = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
             }
         }
 
@@ -110,6 +193,13 @@ namespace SearchableNavbar
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowEnumerators;
             }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowEnumerators = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
         }
 
         public bool CppShowEnumerationNames
@@ -118,6 +208,13 @@ namespace SearchableNavbar
             {
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowEnumerationNames;
+            }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowEnumerationNames = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
             }
         }
 
@@ -137,6 +234,13 @@ namespace SearchableNavbar
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowLocalVariables;
             }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowLocalVariables = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
         }
 
         public bool CppShowClassStructUnionMembers
@@ -145,6 +249,13 @@ namespace SearchableNavbar
             {
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowClassStructUnionMembers;
+            }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowClassStructUnionMembers = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
             }
         }
 
@@ -155,6 +266,13 @@ namespace SearchableNavbar
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowFunctionPrototypes;
             }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowFunctionPrototypes = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
         }
 
         public bool CppShowStructureNames
@@ -163,6 +281,13 @@ namespace SearchableNavbar
             {
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowStructureNames;
+            }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowStructureNames = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
             }
         }
 
@@ -173,6 +298,13 @@ namespace SearchableNavbar
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowTypedefs;
             }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowTypedefs = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
         }
 
         public bool CppShowUnionNames
@@ -181,6 +313,13 @@ namespace SearchableNavbar
             {
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowUnionNames;
+            }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowUnionNames = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
             }
         }
 
@@ -191,6 +330,13 @@ namespace SearchableNavbar
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowVariableDefinitions;
             }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowVariableDefinitions = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
         }
 
         public bool CppShowExternalAndForwardVariableDeclarations
@@ -199,6 +345,13 @@ namespace SearchableNavbar
             {
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowExternalAndForwardVariableDeclarations;
+            }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowExternalAndForwardVariableDeclarations = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
             }
         }
 
@@ -209,6 +362,13 @@ namespace SearchableNavbar
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowFunctionParameters;
             }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowFunctionParameters = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
         }
 
         public bool CppShowGotoLabels
@@ -217,6 +377,13 @@ namespace SearchableNavbar
             {
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowGotoLabels;
+            }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowGotoLabels = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
             }
         }
 
@@ -227,6 +394,13 @@ namespace SearchableNavbar
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowMacroParameters;
             }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowMacroParameters = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
         }
 
         public bool CppShowClasses
@@ -236,6 +410,13 @@ namespace SearchableNavbar
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowClasses;
             }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowClasses = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
         }
 
         public bool CppShowNamespaces
@@ -244,6 +425,13 @@ namespace SearchableNavbar
             {
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowNamespaces;
+            }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowNamespaces = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
             }
         }
 
@@ -272,6 +460,13 @@ namespace SearchableNavbar
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowUsingNamespaceStatements;
             }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowUsingNamespaceStatements = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
         }
 
         public bool CppShowTemplateParameters
@@ -280,6 +475,13 @@ namespace SearchableNavbar
             {
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 return page.CppShowTemplateParameters;
+            }
+            set
+            {
+                CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
+                page.CppShowTemplateParameters = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
             }
         }
     }

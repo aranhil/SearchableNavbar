@@ -230,5 +230,22 @@ namespace SearchableNavbar
             get { return cppShowTemplateParameters; }
             set { cppShowTemplateParameters = value; }
         }
+
+        public event EventHandler SettingsChanged;
+
+        public virtual void OnSettingsChanged()
+        {
+            SettingsChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected override void OnApply(PageApplyEventArgs e)
+        {
+            base.OnApply(e);
+
+            if (e.ApplyBehavior == ApplyKind.Apply)
+            {
+                OnSettingsChanged();
+            }
+        }
     }
 }

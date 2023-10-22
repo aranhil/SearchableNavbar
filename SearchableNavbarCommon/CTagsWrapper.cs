@@ -22,6 +22,7 @@ namespace SearchableNavbar
                 "-x",
                 "--fields=S",
                 GetCppKindsFromPackage(package),
+                GetCKindsFromPackage(package),
                 "--kinds-C#=m",
                 "--kinds-Java=m",
                 "--kinds-JavaScript=mf",
@@ -66,6 +67,30 @@ namespace SearchableNavbar
             }
 
             return output;
+        }
+
+        private static string GetCKindsFromPackage(SearchableNavbarPackage package)
+        {
+            if (package == null)
+            {
+                return "--kinds-C=fp";
+            }
+
+            string returnString = "--kinds-C=";
+            if (package.CShowMacroDefinitions) returnString += "d";
+            if (package.CShowEnumerators) returnString += "e";
+            if (package.CShowFunctionDefinitions) returnString += "f";
+            if (package.CShowEnumerationNames) returnString += "g";
+            if (package.CShowLocalVariables) returnString += "l";
+            if (package.CShowFunctionPrototypes) returnString += "p";
+            if (package.CShowStructureNames) returnString += "s";
+            if (package.CShowTypedefs) returnString += "t";
+            if (package.CShowUnionNames) returnString += "u";
+            if (package.CShowVariableDefinitions) returnString += "v";
+            if (package.CShowFunctionParameters) returnString += "z";
+            if (package.CShowGotoLabels) returnString += "L";
+            if (package.CShowMacroParameters) returnString += "D";
+            return returnString;
         }
 
         private static string GetIgnoredCppMacrosFromPackage(SearchableNavbarPackage package)
@@ -113,7 +138,6 @@ namespace SearchableNavbar
             if (package.CppShowEnumerators) returnString += "e";
             if (package.CppShowFunctionDefinitions) returnString += "f";
             if (package.CppShowEnumerationNames) returnString += "g";
-            //if (package.CppShowIncludedHeaderFiles) returnString += "h";
             if (package.CppShowLocalVariables) returnString += "l";
             if (package.CppShowClassStructUnionMembers) returnString += "m";
             if (package.CppShowFunctionPrototypes) returnString += "p";
@@ -127,8 +151,6 @@ namespace SearchableNavbar
             if (package.CppShowMacroParameters) returnString += "D";
             if (package.CppShowClasses) returnString += "c";
             if (package.CppShowNamespaces) returnString += "n";
-            //if (package.CppShowNamespaceAliases) returnString += "A";
-            //if (package.CppShowNamesImportedViaUsingScopeSymbol) returnString += "N";
             if (package.CppShowUsingNamespaceStatements) returnString += "U";
             if (package.CppShowTemplateParameters) returnString += "Z";
             return returnString;

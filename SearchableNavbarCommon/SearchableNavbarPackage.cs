@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
+using SearchableNavbar.OptionPages;
 using Task = System.Threading.Tasks.Task;
 
 namespace SearchableNavbar
@@ -17,6 +18,7 @@ namespace SearchableNavbar
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideOptionPage(typeof(OptionPageGrid), "Searchable Navbar", "General", 0, 0, true)]
     [ProvideOptionPage(typeof(CppPageGrid), "Searchable Navbar", "C++", 0, 0, true)]
+    [ProvideOptionPage(typeof(CPageGrid), "Searchable Navbar", "C", 0, 0, true)]
     [ProvideAutoLoad(UIContextGuids80.NoSolution, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class SearchableNavbarPackage : AsyncPackage
     {
@@ -47,6 +49,9 @@ namespace SearchableNavbar
 
             CppPageGrid cppPage = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
             cppPage.SettingsChanged += optionsChanged;
+
+            CPageGrid cPage = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+            cPage.SettingsChanged += optionsChanged;
         }
 
         public void UnregisterFromOptionsChangeEvents(EventHandler optionsChanged)
@@ -56,6 +61,9 @@ namespace SearchableNavbar
 
             CppPageGrid cppPage = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
             cppPage.SettingsChanged -= optionsChanged;
+
+            CPageGrid cPage = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+            cPage.SettingsChanged -= optionsChanged;
         }
 
         public void ShowSettings()
@@ -222,15 +230,6 @@ namespace SearchableNavbar
                 page.OnSettingsChanged();
             }
         }
-
-        //public bool CppShowIncludedHeaderFiles
-        //{
-        //    get
-        //    {
-        //        CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
-        //        return page.CppShowIncludedHeaderFiles;
-        //    }
-        //}
 
         public bool CppShowLocalVariables
         {
@@ -440,24 +439,6 @@ namespace SearchableNavbar
             }
         }
 
-        //public bool CppShowNamespaceAliases
-        //{
-        //    get
-        //    {
-        //        CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
-        //        return page.CppShowNamespaceAliases;
-        //    }
-        //}
-
-        //public bool CppShowNamesImportedViaUsingScopeSymbol
-        //{
-        //    get
-        //    {
-        //        CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
-        //        return page.CppShowNamesImportedViaUsingScopeSymbol;
-        //    }
-        //}
-
         public bool CppShowUsingNamespaceStatements
         {
             get
@@ -485,6 +466,246 @@ namespace SearchableNavbar
             {
                 CppPageGrid page = (CppPageGrid)GetDialogPage(typeof(CppPageGrid));
                 page.CppShowTemplateParameters = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowMacroDefinitions
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowMacroDefinitions;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowMacroDefinitions = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowEnumerators
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowEnumerators;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowEnumerators = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowFunctionDefinitions
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowFunctionDefinitions;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowFunctionDefinitions = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowEnumerationNames
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowEnumerationNames;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowEnumerationNames = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowLocalVariables
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowLocalVariables;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowLocalVariables = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowStructMembers
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowStructMembers;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowStructMembers = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowFunctionPrototypes
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowFunctionPrototypes;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowFunctionPrototypes = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowStructureNames
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowStructureNames;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowStructureNames = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowTypedefs
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowTypedefs;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowTypedefs = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowUnionNames
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowUnionNames;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowUnionNames = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowVariableDefinitions
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowVariableDefinitions;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowVariableDefinitions = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowExternalVariableDeclarations
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowExternalVariableDeclarations;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowExternalVariableDeclarations = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowFunctionParameters
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowFunctionParameters;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowFunctionParameters = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowGotoLabels
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowGotoLabels;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowGotoLabels = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool CShowMacroParameters
+        {
+            get
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                return page.CShowMacroParameters;
+            }
+            set
+            {
+                CPageGrid page = (CPageGrid)GetDialogPage(typeof(CPageGrid));
+                page.CShowMacroParameters = value;
                 page.SaveSettingsToStorage();
                 page.OnSettingsChanged();
             }

@@ -308,7 +308,7 @@ namespace SearchableNavbar
         {
             index = -1;
 
-            if (language == "C++")
+            if (language == "C++" || language == "C")
             {
                 if (kind[0] == 'l') return false;
                 if (kind[0] == 'z') return false;
@@ -327,7 +327,7 @@ namespace SearchableNavbar
                 return KnownMonikers.Method;
             }
 
-            if(language == "C++")
+            if(language == "C++" || language == "C")
             {
                 if (kind[0] == 'f') return KnownMonikers.Method;
                 if (kind[0] == 'p') return KnownMonikers.MethodShortcut;
@@ -899,6 +899,25 @@ namespace SearchableNavbar
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Namespaces", value => Package.CppShowNamespaces = value, () => Package.CppShowNamespaces);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Using Namespace Statements", value => Package.CppShowUsingNamespaceStatements = value, () => Package.CppShowUsingNamespaceStatements);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Template Parameters", value => Package.CppShowTemplateParameters = value, () => Package.CppShowTemplateParameters);
+            }
+            else if(FileType == "C")
+            {
+                SearchInputContextMenu.Items.Add(new Separator());
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Definitions", value => Package.CShowMacroDefinitions = value, () => Package.CShowMacroDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumerators", value => Package.CShowEnumerators = value, () => Package.CShowEnumerators);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Definitions", value => Package.CShowFunctionDefinitions = value, () => Package.CShowFunctionDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumeration Names", value => Package.CShowEnumerationNames = value, () => Package.CShowEnumerationNames);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Local Variables", value => Package.CShowLocalVariables = value, () => Package.CShowLocalVariables);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Struct Members", value => Package.CShowStructMembers = value, () => Package.CShowStructMembers);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Prototypes", value => Package.CShowFunctionPrototypes = value, () => Package.CShowFunctionPrototypes);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Structure Names", value => Package.CShowStructureNames = value, () => Package.CShowStructureNames);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Typedefs", value => Package.CShowTypedefs = value, () => Package.CShowTypedefs);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Union Names", value => Package.CShowUnionNames = value, () => Package.CShowUnionNames);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Variable Definitions", value => Package.CShowVariableDefinitions = value, () => Package.CShowVariableDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show External Variable Declarations", value => Package.CShowExternalVariableDeclarations = value, () => Package.CShowExternalVariableDeclarations);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Parameters", value => Package.CShowFunctionParameters = value, () => Package.CShowFunctionParameters);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Goto Labels", value => Package.CShowGotoLabels = value, () => Package.CShowGotoLabels);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Parameters", value => Package.CShowMacroParameters = value, () => Package.CShowMacroParameters);
             }
 
             SearchInputContextMenu.Items.Add(new Separator());

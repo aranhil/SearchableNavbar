@@ -14,7 +14,6 @@ namespace SearchableNavbar
         private bool cppShowFunctionDefinitions = true;
         private bool cppShowEnumerators = false;
         private bool cppShowEnumerationNames = false;
-        //private bool cppShowIncludedHeaderFiles = false;
         private bool cppShowLocalVariables = false;
         private bool cppShowClassStructUnionMembers = false;
         private bool cppShowFunctionPrototypes = true;
@@ -28,8 +27,6 @@ namespace SearchableNavbar
         private bool cppShowMacroParameters = false;
         private bool cppShowClasses = false;
         private bool cppShowNamespaces = false;
-        //private bool cppShowNamespaceAliases = false;
-        //private bool cppShowNamesImportedViaUsingScopeSymbol = false;
         private bool cppShowUsingNamespaceStatements = false;
         private bool cppShowTemplateParameters = false;
 
@@ -68,15 +65,6 @@ namespace SearchableNavbar
             get { return cppShowEnumerationNames; }
             set { cppShowEnumerationNames = value; }
         }
-
-        //[Category("General")]
-        //[DisplayName("Show Included Header Files")]
-        //[Description("Enable or disable the display of included header files.")]
-        //public bool CppShowIncludedHeaderFiles
-        //{
-        //    get { return cppShowIncludedHeaderFiles; }
-        //    set { cppShowIncludedHeaderFiles = value; }
-        //}
 
         [Category("General")]
         [DisplayName("Show Local Variables")]
@@ -194,24 +182,6 @@ namespace SearchableNavbar
             get { return cppShowNamespaces; }
             set { cppShowNamespaces = value; }
         }
-
-        //[Category("General")]
-        //[DisplayName("Show Namespace Aliases")]
-        //[Description("Enable or disable the display of namespace aliases.")]
-        //public bool CppShowNamespaceAliases
-        //{
-        //    get { return cppShowNamespaceAliases; }
-        //    set { cppShowNamespaceAliases = value; }
-        //}
-
-        //[Category("General")]
-        //[DisplayName("Show Names Imported via Using scope::symbol")]
-        //[Description("Enable or disable the display of names imported via 'using scope::symbol' declarations.")]
-        //public bool CppShowNamesImportedViaUsingScopeSymbol
-        //{
-        //    get { return cppShowNamesImportedViaUsingScopeSymbol; }
-        //    set { cppShowNamesImportedViaUsingScopeSymbol = value; }
-        //}
 
         [Category("General")]
         [DisplayName("Show Using Namespace Statements")]

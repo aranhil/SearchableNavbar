@@ -562,7 +562,6 @@ namespace SearchableNavbar
 
         private void UserControl_GotFocus(object sender, RoutedEventArgs e)
         {
-            FilterFunctions();
         }
 
         private void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e)

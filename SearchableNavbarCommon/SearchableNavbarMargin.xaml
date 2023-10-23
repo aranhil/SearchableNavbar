@@ -30,18 +30,25 @@
         </DockPanel>
         <!--<Button HorizontalAlignment="Right" Content="Options" Click="OptionsButton_Click"/>-->
         <Popup x:Name="ItemsPopup" Placement="Relative" VerticalOffset="24">
-            <ListBox x:Name="FunctionsListBox" ItemsSource="{Binding}" Style="{DynamicResource ResultsListBox}" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="500" Focusable="False" SelectionChanged="FunctionsListBox_SelectionChanged" MinWidth="{Binding ActualWidth, ElementName=SearchInput}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <DockPanel MouseDown="DockPanel_MouseDown">
-                            <imaging:CrispImage Width="16" Height="16" Margin="-4,0,2,0" Moniker="{Binding Path=Moniker}" />
-                            <TextBlock Text="{Binding Path=Scope}" Opacity="0.6"/>
-                            <TextBlock Text="{Binding Path=Tag}"/>
-                            <TextBlock Text="{Binding Path=Signature}" Opacity="0.6"/>
-                        </DockPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <Border MaxHeight="502">
+                <ListBox x:Name="FunctionsListBox" ItemsSource="{Binding}" Style="{DynamicResource ResultsListBox}" ScrollViewer.VerticalScrollBarVisibility="Auto" Focusable="False" SelectionChanged="FunctionsListBox_SelectionChanged" MinWidth="{Binding ActualWidth, ElementName=SearchInput}" VirtualizingStackPanel.IsVirtualizing="True" ScrollViewer.CanContentScroll="True">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel MouseDown="DockPanel_MouseDown">
+                                <imaging:CrispImage Width="16" Height="16" Margin="-4,0,2,0" Moniker="{Binding Path=Moniker}" />
+                                <TextBlock Text="{Binding Path=Scope}" Opacity="0.6"/>
+                                <TextBlock Text="{Binding Path=Tag}"/>
+                                <TextBlock Text="{Binding Path=Signature}" Opacity="0.6"/>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
         </Popup>
     </Grid>
 </UserControl>

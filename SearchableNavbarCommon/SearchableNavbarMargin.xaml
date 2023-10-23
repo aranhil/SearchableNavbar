@@ -7,6 +7,7 @@
              xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
              xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
              xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+             xmlns:theming="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Imaging"
              mc:Ignorable="d" Height="24" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded"
              x:Name="SearchableNavbarControl"
              d:DesignHeight="450" d:DesignWidth="800" Visibility="Collapsed" GotFocus="UserControl_GotFocus" PreviewMouseDown="UserControl_PreviewMouseDown">
@@ -14,7 +15,7 @@
         <ResourceDictionary Source="/SearchableNavbar;component/ResourceDictionary.xaml" >
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid x:Name="GridContainer" PreviewKeyDown="GridContainer_PreviewKeyDown">
+    <Grid x:Name="GridContainer" PreviewKeyDown="GridContainer_PreviewKeyDown" theming:ImageThemingUtilities.ImageBackgroundColor="{DynamicResource {x:Static vsshell:EnvironmentColors.ToolWindowBackgroundColorKey}}">
         <Border BorderBrush="#FF444444" BorderThickness="1"></Border>
         <TextBox x:Name="SearchInput" Style="{DynamicResource SomeTextBoxStyle}" TextChanged="FunctionsList_TextChanged" LostKeyboardFocus="SearchInput_LostKeyboardFocus" GotKeyboardFocus="SearchInput_GotKeyboardFocus" PreviewMouseDown="SearchInput_PreviewMouseDown" ContextMenuOpening="SearchInput_ContextMenuOpening">
             <TextBox.ContextMenu>

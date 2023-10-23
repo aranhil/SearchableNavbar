@@ -31,3 +31,10 @@
 
 - Added options pages and a contextual menu
 - Added more tag types that can be displayed for C/C++ and C#
+
+### Version 1.18 (23/10/2023)
+
+- Optimized the navbar to be more responsive
+- Fixed issue where an empty navbar would still remain visible
+- Fixed issue with the icons not using the proper color based on the current theme
+- Added options to toggle the inclusion of scope or signature into the search

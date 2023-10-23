@@ -135,6 +135,38 @@ namespace SearchableNavbar
             }
         }
 
+        public bool IncludeScopeInSearch
+        {
+            get
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                return page.IncludeScopeInSearch;
+            }
+            set
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                page.IncludeScopeInSearch = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
+        public bool IncludeSignatureInSearch
+        {
+            get
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                return page.IncludeSignatureInSearch;
+            }
+            set
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                page.IncludeSignatureInSearch = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
         public string IgnoredFileExtensions
         {
             get

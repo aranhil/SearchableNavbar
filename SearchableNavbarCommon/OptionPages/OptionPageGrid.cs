@@ -14,6 +14,8 @@ namespace SearchableNavbar
         private bool showFullyQualifiedTags = true;
         private bool showAnonymousTags = false;
         private bool showTagSignature = true;
+        private bool includeScopeInSearch = true;
+        private bool includeSignatureInSearch = true;
         private string ignoredFileExtensions = "";
 
         [Category("General")]
@@ -50,6 +52,24 @@ namespace SearchableNavbar
         {
             get { return showTagSignature; }
             set { showTagSignature = value; }
+        }
+
+        [Category("General")]
+        [DisplayName("Include Scope in Search")]
+        [Description("Enable or disable the inclusion of the tag's scope when searching.")]
+        public bool IncludeScopeInSearch
+        {
+            get { return includeScopeInSearch; }
+            set { includeScopeInSearch = value; }
+        }
+
+        [Category("General")]
+        [DisplayName("Include Signature in Search")]
+        [Description("Enable or disable the inclusion of the tag's signature when searching.")]
+        public bool IncludeSignatureInSearch
+        {
+            get { return includeSignatureInSearch; }
+            set { includeSignatureInSearch = value; }
         }
 
         [Category("General")]

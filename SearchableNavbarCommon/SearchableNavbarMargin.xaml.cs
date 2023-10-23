@@ -315,6 +315,10 @@ namespace SearchableNavbar
                         }
                         catch { }
                     }
+                    else if(functionLines.Count == 0)
+                    {
+                        SearchableNavbarControl.Visibility = Visibility.Collapsed;
+                    }
                 });
             }
             catch(Exception)
@@ -521,10 +525,13 @@ namespace SearchableNavbar
             filteredFunctionLines.Clear();
             string[] words = SearchInput.Text.ToLowerInvariant().Split(' ');
 
+            bool includeScope = Package.IncludeScopeInSearch;
+            bool includeSignature = Package.IncludeSignatureInSearch;
+
             foreach (FunctionInfo functionInfo in functionLines)
             {
                 bool allWordsMatch = true;
-                string fullTextLower = (functionInfo.Scope + functionInfo.Tag + functionInfo.Signature).ToLowerInvariant();
+                string fullTextLower = ((includeScope ? functionInfo.Scope : "") + functionInfo.Tag + (includeSignature ? functionInfo.Signature : "")).ToLowerInvariant();
 
                 foreach (string word in words)
                 {
@@ -937,6 +944,8 @@ namespace SearchableNavbar
             ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Fully Qualified Tags", value => Package.ShowFullyQualifiedTags = value, () => Package.ShowFullyQualifiedTags);
             ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Anonymous Tags", value => Package.ShowAnonymousTags = value, () => Package.ShowAnonymousTags);
             ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Tag Signature", value => Package.ShowTagSignature = value, () => Package.ShowTagSignature);
+            ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Include Scope in Search", value => Package.IncludeScopeInSearch = value, () => Package.IncludeScopeInSearch);
+            ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Include Signature in Search", value => Package.IncludeSignatureInSearch = value, () => Package.IncludeSignatureInSearch);
 
             if (FileType == "C++")
             {
@@ -945,7 +954,7 @@ namespace SearchableNavbar
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Classes", value => Package.CppShowClasses = value, () => Package.CppShowClasses);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumeration Names", value => Package.CppShowEnumerationNames = value, () => Package.CppShowEnumerationNames);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumerators", value => Package.CppShowEnumerators = value, () => Package.CppShowEnumerators);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show External And Forward Variable Declarations", value => Package.CppShowExternalAndForwardVariableDeclarations = value, () => Package.CppShowExternalAndForwardVariableDeclarations);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show External and Forward Variable Declarations", value => Package.CppShowExternalAndForwardVariableDeclarations = value, () => Package.CppShowExternalAndForwardVariableDeclarations);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Definitions", value => Package.CppShowFunctionDefinitions = value, () => Package.CppShowFunctionDefinitions);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Parameters", value => Package.CppShowFunctionParameters = value, () => Package.CppShowFunctionParameters);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Prototypes", value => Package.CppShowFunctionPrototypes = value, () => Package.CppShowFunctionPrototypes);
@@ -966,7 +975,7 @@ namespace SearchableNavbar
                 SearchInputContextMenu.Items.Add(new Separator());
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumeration Names", value => Package.CppShowEnumerationNames = value, () => Package.CppShowEnumerationNames);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumerators", value => Package.CppShowEnumerators = value, () => Package.CppShowEnumerators);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show External And Forward Variable Declarations", value => Package.CppShowExternalAndForwardVariableDeclarations = value, () => Package.CppShowExternalAndForwardVariableDeclarations);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show External and Forward Variable Declarations", value => Package.CppShowExternalAndForwardVariableDeclarations = value, () => Package.CppShowExternalAndForwardVariableDeclarations);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Definitions", value => Package.CppShowFunctionDefinitions = value, () => Package.CppShowFunctionDefinitions);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Parameters", value => Package.CppShowFunctionParameters = value, () => Package.CppShowFunctionParameters);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Prototypes", value => Package.CppShowFunctionPrototypes = value, () => Package.CppShowFunctionPrototypes);

@@ -942,56 +942,56 @@ namespace SearchableNavbar
             if (FileType == "C++")
             {
                 SearchInputContextMenu.Items.Add(new Separator());
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Definitions", value => Package.CppShowMacroDefinitions = value, () => Package.CppShowMacroDefinitions);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Definitions", value => Package.CppShowFunctionDefinitions = value, () => Package.CppShowFunctionDefinitions);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumerators", value => Package.CppShowEnumerators = value, () => Package.CppShowEnumerators);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumeration Names", value => Package.CppShowEnumerationNames = value, () => Package.CppShowEnumerationNames);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Local Variables", value => Package.CppShowLocalVariables = value, () => Package.CppShowLocalVariables);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Class, Struct, and Union Members", value => Package.CppShowClassStructUnionMembers = value, () => Package.CppShowClassStructUnionMembers);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Classes", value => Package.CppShowClasses = value, () => Package.CppShowClasses);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumeration Names", value => Package.CppShowEnumerationNames = value, () => Package.CppShowEnumerationNames);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumerators", value => Package.CppShowEnumerators = value, () => Package.CppShowEnumerators);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show External And Forward Variable Declarations", value => Package.CppShowExternalAndForwardVariableDeclarations = value, () => Package.CppShowExternalAndForwardVariableDeclarations);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Definitions", value => Package.CppShowFunctionDefinitions = value, () => Package.CppShowFunctionDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Parameters", value => Package.CppShowFunctionParameters = value, () => Package.CppShowFunctionParameters);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Prototypes", value => Package.CppShowFunctionPrototypes = value, () => Package.CppShowFunctionPrototypes);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Goto Labels", value => Package.CppShowGotoLabels = value, () => Package.CppShowGotoLabels);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Local Variables", value => Package.CppShowLocalVariables = value, () => Package.CppShowLocalVariables);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Definitions", value => Package.CppShowMacroDefinitions = value, () => Package.CppShowMacroDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Parameters", value => Package.CppShowMacroParameters = value, () => Package.CppShowMacroParameters);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Namespaces", value => Package.CppShowNamespaces = value, () => Package.CppShowNamespaces);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Structure Names", value => Package.CppShowStructureNames = value, () => Package.CppShowStructureNames);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Template Parameters", value => Package.CppShowTemplateParameters = value, () => Package.CppShowTemplateParameters);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Typedefs", value => Package.CppShowTypedefs = value, () => Package.CppShowTypedefs);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Union Names", value => Package.CppShowUnionNames = value, () => Package.CppShowUnionNames);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Variable Definitions", value => Package.CppShowVariableDefinitions = value, () => Package.CppShowVariableDefinitions);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show External And Forward Variable Declarations", value => Package.CppShowExternalAndForwardVariableDeclarations = value, () => Package.CppShowExternalAndForwardVariableDeclarations);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Parameters", value => Package.CppShowFunctionParameters = value, () => Package.CppShowFunctionParameters);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Goto Labels", value => Package.CppShowGotoLabels = value, () => Package.CppShowGotoLabels);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Parameters", value => Package.CppShowMacroParameters = value, () => Package.CppShowMacroParameters);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Classes", value => Package.CppShowClasses = value, () => Package.CppShowClasses);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Namespaces", value => Package.CppShowNamespaces = value, () => Package.CppShowNamespaces);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Using Namespace Statements", value => Package.CppShowUsingNamespaceStatements = value, () => Package.CppShowUsingNamespaceStatements);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Template Parameters", value => Package.CppShowTemplateParameters = value, () => Package.CppShowTemplateParameters);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Variable Definitions", value => Package.CppShowVariableDefinitions = value, () => Package.CppShowVariableDefinitions);
             }
             else if(FileType == "C")
             {
                 SearchInputContextMenu.Items.Add(new Separator());
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Definitions", value => Package.CppShowMacroDefinitions = value, () => Package.CppShowMacroDefinitions);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumerators", value => Package.CppShowEnumerators = value, () => Package.CppShowEnumerators);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Definitions", value => Package.CppShowFunctionDefinitions = value, () => Package.CppShowFunctionDefinitions);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumeration Names", value => Package.CppShowEnumerationNames = value, () => Package.CppShowEnumerationNames);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Local Variables", value => Package.CppShowLocalVariables = value, () => Package.CppShowLocalVariables);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Struct Members", value => Package.CppShowClassStructUnionMembers = value, () => Package.CppShowClassStructUnionMembers);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumerators", value => Package.CppShowEnumerators = value, () => Package.CppShowEnumerators);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show External And Forward Variable Declarations", value => Package.CppShowExternalAndForwardVariableDeclarations = value, () => Package.CppShowExternalAndForwardVariableDeclarations);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Definitions", value => Package.CppShowFunctionDefinitions = value, () => Package.CppShowFunctionDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Parameters", value => Package.CppShowFunctionParameters = value, () => Package.CppShowFunctionParameters);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Prototypes", value => Package.CppShowFunctionPrototypes = value, () => Package.CppShowFunctionPrototypes);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Goto Labels", value => Package.CppShowGotoLabels = value, () => Package.CppShowGotoLabels);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Local Variables", value => Package.CppShowLocalVariables = value, () => Package.CppShowLocalVariables);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Definitions", value => Package.CppShowMacroDefinitions = value, () => Package.CppShowMacroDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Parameters", value => Package.CppShowMacroParameters = value, () => Package.CppShowMacroParameters);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Struct Members", value => Package.CppShowClassStructUnionMembers = value, () => Package.CppShowClassStructUnionMembers);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Structure Names", value => Package.CppShowStructureNames = value, () => Package.CppShowStructureNames);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Typedefs", value => Package.CppShowTypedefs = value, () => Package.CppShowTypedefs);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Union Names", value => Package.CppShowUnionNames = value, () => Package.CppShowUnionNames);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Variable Definitions", value => Package.CppShowVariableDefinitions = value, () => Package.CppShowVariableDefinitions);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show External And Forward Variable Declarations", value => Package.CppShowExternalAndForwardVariableDeclarations = value, () => Package.CppShowExternalAndForwardVariableDeclarations);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Function Parameters", value => Package.CppShowFunctionParameters = value, () => Package.CppShowFunctionParameters);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Goto Labels", value => Package.CppShowGotoLabels = value, () => Package.CppShowGotoLabels);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Parameters", value => Package.CppShowMacroParameters = value, () => Package.CppShowMacroParameters);
             }
             else if(FileType == "C#")
             {
                 SearchInputContextMenu.Items.Add(new Separator());
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Classes", value => Package.CSharpShowClasses = value, () => Package.CSharpShowClasses);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Definitions", value => Package.CSharpShowMacroDefinitions = value, () => Package.CSharpShowMacroDefinitions);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumeration Names", value => Package.CSharpShowEnumerationNames = value, () => Package.CSharpShowEnumerationNames);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumerators", value => Package.CSharpShowEnumerators = value, () => Package.CSharpShowEnumerators);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Events", value => Package.CSharpShowEvents = value, () => Package.CSharpShowEvents);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Fields", value => Package.CSharpShowFields = value, () => Package.CSharpShowFields);
-                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Enumeration Names", value => Package.CSharpShowEnumerationNames = value, () => Package.CSharpShowEnumerationNames);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Interfaces", value => Package.CSharpShowInterfaces = value, () => Package.CSharpShowInterfaces);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Local Variables", value => Package.CSharpShowLocalVariables = value, () => Package.CSharpShowLocalVariables);
+                ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Macro Definitions", value => Package.CSharpShowMacroDefinitions = value, () => Package.CSharpShowMacroDefinitions);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Methods", value => Package.CSharpShowMethods = value, () => Package.CSharpShowMethods);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Namespaces", value => Package.CSharpShowNamespaces = value, () => Package.CSharpShowNamespaces);
                 ContextMenuToggle.AddMenuToggleOption(SearchInputContextMenu, "Show Properties", value => Package.CSharpShowProperties = value, () => Package.CSharpShowProperties);

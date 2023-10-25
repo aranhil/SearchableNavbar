@@ -1,5 +1,4 @@
 # Searchable Navbar
-![GitHub issues](https://img.shields.io/github/issues/aranhil/SearchableNavbar)
 ![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/Stefan-IulianChivu.SearchableNavBar-x64)
 ![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/Stefan-IulianChivu.SearchableNavBar-x64)
 ![GitHub](https://img.shields.io/github/license/aranhil/SearchableNavbar)

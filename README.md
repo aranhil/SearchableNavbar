@@ -14,6 +14,10 @@
 ![image](https://github.com/aranhil/SearchableNavbar/assets/755601/644f8944-7b40-4c93-acac-1284faff28bf)
 
 ## Changelog
+### Version 1.19 (13/12/2023)
+
+- Added the official ctags executable to the package that doesn't need the Visual C++ Redistributable for Visual Studio 2013
+
 ### Version 1.18 (23/10/2023)
 
 - Optimized the navbar to be more responsive

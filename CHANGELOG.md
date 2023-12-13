@@ -38,3 +38,7 @@
 - Fixed issue where an empty navbar would still remain visible
 - Fixed issue with the icons not using the proper color based on the current theme
 - Added options to toggle the inclusion of scope or signature into the search
+
+### Version 1.19 (13/12/2023)
+
+- Added the official ctags executable to the package that doesn't need the Visual C++ Redistributable for Visual Studio 2013

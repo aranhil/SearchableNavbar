@@ -17,6 +17,7 @@ namespace SearchableNavbar
         private bool includeScopeInSearch = true;
         private bool includeSignatureInSearch = true;
         private string ignoredFileExtensions = "";
+        private string languageMap = "c++:+.cu.cuh.cl.clcpp";
 
         [Category("General")]
         [DisplayName("Sort Alphabetically")]
@@ -79,6 +80,15 @@ namespace SearchableNavbar
         {
             get { return ignoredFileExtensions; }
             set { ignoredFileExtensions = value; }
+        }
+
+        [Category("General")]
+        [DisplayName("Language map")]
+        [Description("A map of file extensions to languages")]
+        public string LanguageMap
+        {
+            get { return languageMap; }
+            set { languageMap = value; }
         }
 
         public event EventHandler SettingsChanged;

@@ -183,6 +183,22 @@ namespace SearchableNavbar
             }
         }
 
+        public string LanguageMap
+        {
+            get
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                return page.LanguageMap;
+            }
+            set
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                page.LanguageMap = value;
+                page.SaveSettingsToStorage();
+                page.OnSettingsChanged();
+            }
+        }
+
         public string CppIgnoredMacros
         {
             get

@@ -32,6 +32,7 @@ namespace SearchableNavbar
                 "--kinds-Ruby=f",
                 "--kinds-Rust=fP",
                 "--kinds-TypeScript=fm",
+                GetLanguageMapFromPackage(package),
                 GetExtraOptionsFromPackage(package),
                 "--_xformat=\"%N\t%n\t%S\t%k\t%l\t%Z\"",
                 GetSortOptionFromPackage(package),
@@ -159,15 +160,25 @@ namespace SearchableNavbar
 
         private static string GetExtraOptionsFromPackage(SearchableNavbarPackage package)
         {
-            if(package == null)
+            if (package == null)
             {
                 return "--extras=+q";
             }
 
             string returnString = "--extras=";
-            if(package.ShowFullyQualifiedTags) returnString += "+q";
-            if(!package.ShowAnonymousTags) returnString += "-{anonymous}";
+            if (package.ShowFullyQualifiedTags) returnString += "+q";
+            if (!package.ShowAnonymousTags) returnString += "-{anonymous}";
             return returnString;
+        }
+
+        private static string GetLanguageMapFromPackage(SearchableNavbarPackage package)
+        {
+            if (package == null || package.LanguageMap.Length == 0)
+            {
+                return "";
+            }
+
+            return "--langmap=" + package.LanguageMap;
         }
 
         private static string GetSortOptionFromPackage(SearchableNavbarPackage package)

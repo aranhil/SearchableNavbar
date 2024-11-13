@@ -2,7 +2,7 @@
 ![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/Stefan-IulianChivu.SearchableNavBar-x64)
 ![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/Stefan-IulianChivu.SearchableNavBar-x64)
 ![GitHub](https://img.shields.io/github/license/aranhil/SearchableNavbar)
-<a href="buymeacoffee.com/aranhil"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" height="20px"></a>
+<a href="https://buymeacoffee.com/aranhil"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" height="20px"></a>
 
 *Searchable Navbar* is a Visual Studio extension that replaces the standard navigation bar with a searchable navigation bar. It uses [Universal Ctags](https://github.com/universal-ctags/ctags) to generate the function tags, so any language supported by Universal Ctags is also supported by this extension.
 

@@ -42,3 +42,7 @@
 ### Version 1.19 (13/12/2023)
 
 - Added the official ctags executable to the package that doesn't need the Visual C++ Redistributable for Visual Studio 2013
+
+### Version 1.20 (13/11/2024)
+
+- Added the ctags language map to the options page, mapping CUDA (.cu, .cuh) and OpenCL (.cl, .clcpp) to C++ by default.
